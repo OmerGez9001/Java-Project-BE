@@ -1,0 +1,21 @@
+server:
+  error:
+    include-stacktrace: never
+spring:
+  application:
+    name: investigation-service
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/store
+    username: postgres
+    password: 1qaz!QAZ
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  sql:
+    init:
+      platform: postgres
