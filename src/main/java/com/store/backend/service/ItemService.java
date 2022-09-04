@@ -34,7 +34,7 @@ public class ItemService {
         return itemRepository.save(item);
     }
 
-    public Item getItem(Long itemId){
+    public Item getItem(Long itemId) {
         return itemRepository.findById(itemId).get();
     }
 
@@ -57,6 +57,10 @@ public class ItemService {
                 throw new ItemNotExistsInShop(itemQuantityKey.getShopId(), itemQuantityKey.getItemId());
         }
         return this.itemQuantityRepository.findAllById(itemQuantityKeys);
+    }
+
+    public List<ItemQuantity> fetchShopItems(Long shopId) {
+        return this.itemQuantityRepository.findAllByIdShopId(shopId);
     }
 
     public double itemPrice(Long itemId) {

@@ -1,6 +1,7 @@
 server:
   error:
     include-stacktrace: never
+    include-message: always
 spring:
   application:
     name: investigation-service

@@ -15,19 +15,24 @@ import java.util.List;
 public class CustomerController {
     private final CustomerService customerService;
 
+    @GetMapping("/{id}")
+    public AbstractCustomer getCustomer(@PathVariable("id") String id) {
+        return this.customerService.getCustomer(id);
+    }
+
     @PostMapping
     public AbstractCustomer createCustomer(@RequestBody AbstractCustomer abstractCustomer) throws CustomerAlreadyExists {
         return customerService.createCustomer(abstractCustomer);
     }
 
     @PutMapping
-    public AbstractCustomer updateCustomer(@RequestBody AbstractCustomer abstractCustomer){
+    public AbstractCustomer updateCustomer(@RequestBody AbstractCustomer abstractCustomer) {
         return customerService.updateCustomer(abstractCustomer);
 
     }
 
     @GetMapping
-    public List<AbstractCustomer> getAllCustomers(){
+    public List<AbstractCustomer> getAllCustomers() {
         return customerService.customers();
     }
 }

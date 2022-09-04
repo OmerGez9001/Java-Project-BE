@@ -6,7 +6,7 @@ import java.util.List;
 
 @Data
 public class TransactionDetails {
-    private String customerUsername;
+    private String customerId;
     private Long shopId;
     private List<ItemTransactionRequest> items;
 

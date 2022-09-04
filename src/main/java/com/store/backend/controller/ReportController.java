@@ -24,7 +24,7 @@ public class ReportController {
     }
 
     @GetMapping("/category")
-    public List<SellsPerCategoryReport> getSellsPerCategory(@RequestParam String doc) {
+    public List<SellsPerCategoryReport> getSellsPerCategory() {
         return itemLogService.getSellsPerCategory();
     }
 

@@ -1,5 +1,6 @@
 package com.store.backend.data;
 
+import com.store.backend.data.dto.TransactionResult;
 import com.store.backend.service.ItemLogService;
 import com.store.backend.data.dto.SellsPerShopReport;
 import com.store.backend.data.dto.TransactionDetails;
@@ -17,6 +18,7 @@ import com.store.backend.repository.*;
 import com.store.backend.service.TransactionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
@@ -34,6 +36,9 @@ public class DataLoader implements CommandLineRunner {
     private final ItemQuantityRepository itemQuantityRepository;
     private final TransactionService transactionService;
     private final CustomerRepository customerRepository;
+
+    private final BCryptPasswordEncoder passwordEncoder;
+
 
     private final ItemLogService itemLogService;
 
@@ -56,9 +61,8 @@ public class DataLoader implements CommandLineRunner {
 
     private void createWorkers() {
         Worker worker = Worker.builder()
-                .username("bleicher")
-                .password("bleicher")
                 .workerId("555")
+                .password(passwordEncoder.encode("bleicher"))
                 .id("208632752")
                 .fullName("Itay Bleicher")
                 .phoneNumber("0527222646")
@@ -66,9 +70,8 @@ public class DataLoader implements CommandLineRunner {
                 .job(Job.SHIFT_SUPERVISOR)
                 .shop(shopRepository.findById(1L).get()).build();
         Worker worker2 = Worker.builder()
-                .username("bleicher2")
-                .password("bleicher2")
-                .workerId("555")
+                .workerId("5556")
+                .password(passwordEncoder.encode("bleicher2"))
                 .id("208632752")
                 .fullName("Itay Bleicher")
                 .phoneNumber("0527222646")
@@ -124,7 +127,7 @@ public class DataLoader implements CommandLineRunner {
             TransactionDetails transactionDetails = new TransactionDetails();
             transactionDetails.setItems(Arrays.asList(new ItemTransactionRequest(ThreadLocalRandom.current().nextInt(1, 10), ThreadLocalRandom.current().nextInt(0, 10)), new ItemTransactionRequest(2L, 3)));
             transactionDetails.setShopId(ThreadLocalRandom.current().nextLong(1, 10));
-            transactionDetails.setCustomerUsername("Bleicher");
+            transactionDetails.setCustomerId("Bleicher");
             transactionService.buy(transactionDetails);
         }
 
@@ -135,8 +138,8 @@ public class DataLoader implements CommandLineRunner {
         TransactionDetails transactionDetails = new TransactionDetails();
         transactionDetails.setItems(Arrays.asList(new ItemTransactionRequest(3L, 3), new ItemTransactionRequest(2L, 3)));
         transactionDetails.setShopId(1L);
-        transactionDetails.setCustomerUsername("Bleicher");
-        double v = transactionService.sell(transactionDetails);
+        transactionDetails.setCustomerId("Bleicher");
+        TransactionResult v = transactionService.sell(transactionDetails);
     }
 
 }

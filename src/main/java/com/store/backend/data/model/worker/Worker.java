@@ -16,11 +16,9 @@ import javax.persistence.*;
 @Builder
 public class Worker {
     @Id
-    private String username;
+    private String workerId;
     @Column
     private String password;
-    @Column
-    private String workerId;
     @Column
     private String id;
     @Column
@@ -32,7 +30,8 @@ public class Worker {
     @Column
     private Job job;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "shop_id")
     private Shop shop;
+
 }

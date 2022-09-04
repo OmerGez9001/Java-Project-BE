@@ -40,13 +40,14 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException {
-        User user = (User) authResult.getPrincipal();
+        UserWithClaims user = (UserWithClaims) authResult.getPrincipal();
         Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
         String accessToken = JWT.create()
                 .withSubject(user.getUsername())
                 .withExpiresAt(new Date(System.currentTimeMillis() + 10000 * 60 * 1000))
                 .withIssuer(request.getRequestURL().toString())
                 .withClaim("roles", user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
+                .withClaim("shop", user.getShopId())
                 .sign(algorithm);
 
         String refreshToken = JWT.create()
@@ -54,6 +55,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
                 .withExpiresAt(new Date(System.currentTimeMillis() + 30 * 60 * 1000))
                 .withIssuer(request.getRequestURL().toString())
                 .withClaim("roles", user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
+                .withClaim("shop", user.getShopId())
                 .sign(algorithm);
 
         response.setHeader("access_token", accessToken);
@@ -63,7 +65,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
         body.put("access_token", accessToken);
         body.put("refresh_token", refreshToken);
         response.setContentType(APPLICATION_JSON_VALUE);
-        new ObjectMapper().writeValue(response.getOutputStream(),body);
+        new ObjectMapper().writeValue(response.getOutputStream(), body);
 
 
     }

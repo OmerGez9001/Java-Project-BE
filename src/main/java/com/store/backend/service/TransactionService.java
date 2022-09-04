@@ -2,6 +2,7 @@ package com.store.backend.service;
 
 import com.store.backend.data.dto.TransactionDetails;
 import com.store.backend.data.dto.ItemTransactionRequest;
+import com.store.backend.data.dto.TransactionResult;
 import com.store.backend.exception.ItemNotEnoughQuantity;
 import com.store.backend.exception.ItemNotExistsInShop;
 import com.store.backend.data.model.customer.AbstractCustomer;
@@ -28,11 +29,11 @@ public class TransactionService {
     private final ItemService itemService;
     private final ItemLogService ItemLogger;
 
-    public double buy(TransactionDetails transactionDetails) throws ItemNotExistsInShop, ItemNotEnoughQuantity {
+    public TransactionResult buy(TransactionDetails transactionDetails) throws ItemNotExistsInShop, ItemNotEnoughQuantity {
         double price = 0;
         String transactionId = UUID.randomUUID().toString();
 
-        AbstractCustomer abstractCustomer = customerService.getCustomer(transactionDetails.getCustomerUsername());
+        AbstractCustomer abstractCustomer = customerService.getCustomer(transactionDetails.getCustomerId());
 
         List<Long> itemIds = transactionDetails.getItems().stream().map(ItemTransactionRequest::getItemId).toList();
 
@@ -62,13 +63,14 @@ public class TransactionService {
                             .category(UUID.randomUUID().toString())
                             .build());
         }
-        return price;
+        return new TransactionResult(transactionId, price);
     }
 
-    public double sell(TransactionDetails transactionDetails) throws ItemNotExistsInShop, ItemNotEnoughQuantity {
+    public TransactionResult sell(TransactionDetails transactionDetails) throws ItemNotExistsInShop, ItemNotEnoughQuantity {
         double price = 0;
 
-        AbstractCustomer abstractCustomer = customerService.getCustomer(transactionDetails.getCustomerUsername());
+        String transactionId = UUID.randomUUID().toString();
+        AbstractCustomer abstractCustomer = customerService.getCustomer(transactionDetails.getCustomerId());
 
         List<Long> itemIds = transactionDetails.getItems().stream().map(ItemTransactionRequest::getItemId).toList();
 
@@ -91,6 +93,6 @@ public class TransactionService {
             itemService.upsertItemQuantity(existingItem);
 
         }
-        return price;
+        return new TransactionResult(transactionId, price);
     }
 }

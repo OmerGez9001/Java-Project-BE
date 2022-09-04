@@ -14,9 +14,6 @@ public class CustomerService {
     private final CustomerRepository customerRepository;
 
     public AbstractCustomer createCustomer(AbstractCustomer customer) throws CustomerAlreadyExists {
-        if (customerRepository.existsById(customer.getId())) {
-            throw new CustomerAlreadyExists("Customer already exists: " + customer.getId());
-        }
         return this.customerRepository.save(customer);
     }
 

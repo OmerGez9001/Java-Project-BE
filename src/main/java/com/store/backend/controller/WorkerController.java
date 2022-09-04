@@ -20,13 +20,13 @@ public class WorkerController {
     }
 
     @PostMapping
-    public Worker createWorker(@RequestBody Worker worker) throws  UserAlreadyExists {
+    public Worker upsertWorker(@RequestBody Worker worker) throws UserAlreadyExists {
         return workerService.createWorker(worker);
     }
 
-    @PutMapping
-    public Worker updateWorker(@RequestBody Worker worker){
-        return workerService.updateWorker(worker);
+    @DeleteMapping("/{id}")
+    public void deleteWorker(@PathVariable String id) {
+        workerService.deleteWorker(id);
     }
 
 
