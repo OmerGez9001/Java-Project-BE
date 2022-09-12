@@ -4,6 +4,11 @@ import lombok.Data;
 
 @Data
 public class Message {
-    private String from;
-    private String text;
+    private String content;
+    private String sender;
+    private MessageType type;
+
+    public enum MessageType {
+        CHAT, LEAVE, JOIN
+    }
 }
