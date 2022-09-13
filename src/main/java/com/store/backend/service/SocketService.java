@@ -4,6 +4,7 @@ import com.store.backend.data.dto.WorkerDetails;
 import com.store.backend.data.dto.WorkerStatus;
 import lombok.AllArgsConstructor;
 import org.apache.commons.collections4.queue.SynchronizedQueue;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -14,6 +15,7 @@ import java.util.Queue;
 
 @Service
 @AllArgsConstructor
+@Lazy
 public class SocketService {
 
     private final ShopService shopService;

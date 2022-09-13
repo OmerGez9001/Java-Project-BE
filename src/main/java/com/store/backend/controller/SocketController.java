@@ -6,6 +6,7 @@ import com.store.backend.service.SocketService;
 import lombok.AllArgsConstructor;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -19,11 +20,11 @@ import java.security.Principal;
 
 
 @Controller
-@AllArgsConstructor
 public class SocketController {
 
     @Autowired
-    private final SocketService socketService;
+    @Lazy
+    private SocketService socketService;
 
     @EventListener
     public void onDisconnectEvent(SessionDisconnectEvent disconnectEvent) {
