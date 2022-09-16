@@ -67,7 +67,7 @@ public class DataLoader implements CommandLineRunner {
                 .fullName("Itay Bleicher")
                 .phoneNumber("0527222646")
                 .accountNumber("12345")
-                .job(Job.SHIFT_SUPERVISOR)
+                .job(Job.CASHIER)
                 .shop(shopRepository.findById(1L).get()).build();
         Worker worker2 = Worker.builder()
                 .workerId("5556")
@@ -76,9 +76,21 @@ public class DataLoader implements CommandLineRunner {
                 .fullName("Itay Bleicher")
                 .phoneNumber("0527222646")
                 .accountNumber("12345")
+                .job(Job.SELLER)
+                .shop(shopRepository.findById(2L).get()).build();
+
+        Worker worker3 = Worker.builder()
+                .workerId("123")
+                .password(passwordEncoder.encode("123"))
+                .id("208632754")
+                .fullName("Bukaki Bleicher")
+                .phoneNumber("123123123132")
+                .accountNumber("123123123")
                 .job(Job.SHIFT_SUPERVISOR)
-                .shop(shopRepository.findById(1L).get()).build();
-        workerRepository.saveAll(Arrays.asList(worker, worker2));
+                .shop(shopRepository.findById(2L).get()).build();
+
+
+        workerRepository.saveAll(Arrays.asList(worker, worker2, worker3));
     }
 
     private void createShops() {
