@@ -30,7 +30,7 @@ public class Worker {
     @Column
     private Job job;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = { CascadeType.MERGE, CascadeType.PERSIST })
     @JoinColumn(name = "shop_id")
     private Shop shop;
 

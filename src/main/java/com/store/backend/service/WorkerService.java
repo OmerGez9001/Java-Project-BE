@@ -1,6 +1,7 @@
 package com.store.backend.service;
 
 import com.store.backend.config.filter.UserWithClaims;
+import com.store.backend.data.model.report.RegisterAction;
 import com.store.backend.data.model.report.RegisterLog;
 import com.store.backend.exception.UserAlreadyExists;
 import com.store.backend.data.model.worker.Job;
@@ -35,7 +36,8 @@ public class WorkerService implements UserDetailsService {
         worker.setPassword(passwordEncoder.encode(worker.getPassword()));
         worker.setShop(shopRepository.findById(worker.getShop().getId()).get());
         Worker persistentWorker = this.workerRepository.save(worker);
-        this.registerLogService.registerLog(new RegisterLog());
+        RegisterAction registerAction = this.workerRepository.existsById(worker.getWorkerId()) ? RegisterAction.MODIFY : RegisterAction.CREATE;
+        this.registerLogService.registerWorkerLog(persistentWorker.getWorkerId(), registerAction);
         return persistentWorker;
     }
 
@@ -49,6 +51,7 @@ public class WorkerService implements UserDetailsService {
 
     public void deleteWorker(String workerId) {
         this.workerRepository.deleteById(workerId);
+        this.registerLogService.registerWorkerLog(workerId, RegisterAction.DELETE);
     }
 
     @Override
