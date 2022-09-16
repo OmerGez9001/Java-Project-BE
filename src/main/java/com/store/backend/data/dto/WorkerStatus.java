@@ -6,5 +6,5 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class WorkerStatus {
-    private boolean isBusy;
+    private String chatWith;
 }

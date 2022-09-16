@@ -1,17 +1,20 @@
 package com.store.backend.service;
 
+import com.store.backend.data.dto.Message;
 import com.store.backend.data.dto.WorkerDetails;
 import com.store.backend.data.dto.WorkerStatus;
+import com.store.backend.data.model.chat.ReturnChat;
+import com.store.backend.repository.ReturnChatRepository;
 import lombok.AllArgsConstructor;
+import lombok.SneakyThrows;
 import org.apache.commons.collections4.queue.SynchronizedQueue;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Queue;
+import java.util.*;
+import java.util.stream.Stream;
 
 @Service
 @AllArgsConstructor
@@ -20,29 +23,84 @@ public class SocketService {
 
     private final ShopService shopService;
 
+    private final SimpMessagingTemplate simpMessagingTemplate;
+
     private final Map<Long, Queue<String>> shopIdToWorkersId = new HashMap<>();
 
     private final Map<String, WorkerStatus> workerIdToStatus = new HashMap<>();
+
+    private final Map<String, String> chatIdToManager = new HashMap<>();
+
+    private final ReturnChatRepository returnChatRepository;
+
 
     @PostConstruct
     private void buildShopsQueue() {
         shopService.shops().forEach(shop -> shopIdToWorkersId.put(shop.getId(), SynchronizedQueue.synchronizedQueue((new LinkedList<>()))));
     }
 
+    @SneakyThrows
     public void setWorkerOnConnect(WorkerDetails workerDetails) {
-        workerIdToStatus.put(workerDetails.getWorkerId(), new WorkerStatus(false));
+        workerIdToStatus.put(workerDetails.getWorkerId(), new WorkerStatus(null));
         Queue<String> shopWorkersQueue = shopIdToWorkersId.get(workerDetails.getShopId());
         shopWorkersQueue.add(workerDetails.getWorkerId());
     }
 
-    public void setWorkerBusy(String workerId) {
-        WorkerStatus workerStatus = workerIdToStatus.get(workerId);
-        workerStatus.setBusy(true);
+    public void returnToChat(WorkerDetails workerDetails) {
+        Optional<ReturnChat> foundChat = returnChatRepository.findByToShopId(workerDetails.getShopId());
+        foundChat.ifPresent(returnChat -> sendToUserByShopId(new WorkerDetails(returnChat.getWorkerId(), returnChat.getFromShopId()), new Message(returnChat.getContent(), workerDetails.getWorkerId(), returnChat.getToShopId())));
+    }
 
+    @SneakyThrows
+
+    public void setWorkerBusy(String workerId, String chatWith) {
+        WorkerStatus workerStatus = workerIdToStatus.get(workerId);
+        workerStatus.setChatWith(chatWith);
+    }
+
+    public String buildChatId(String workerSender, String workerReceiver) {
+        return Stream.of(workerSender, workerReceiver).sorted().reduce("", (first, second) -> first + second);
+    }
+
+    public void addManager(String chatId, String managerId) {
+        chatIdToManager.put(chatId, managerId);
+    }
+
+    public Set<String> getExistingChatsIds() {
+        return chatIdToManager.keySet();
     }
 
     public void setWorkerOnDisconnect(String workerId) {
         workerIdToStatus.remove(workerId);
+    }
+
+    public void sendToUserByShopId(WorkerDetails senderDetails, Message message) {
+        WorkerStatus workerStatus = workerIdToStatus.get(senderDetails.getWorkerId());
+        String sendTO;
+
+        if (workerStatus.getChatWith() == null) {
+            sendTO = getFirstAvailableWorker(message.getShopId());
+            if (sendTO == null) {
+                returnChatRepository.save(new ReturnChat(senderDetails.getWorkerId(), senderDetails.getShopId(), message.getShopId(), message.getContent()));
+                return;
+            }
+            chatIdToManager.put(buildChatId(senderDetails.getWorkerId(), sendTO), null);
+            workerStatus.setChatWith(sendTO);
+            workerIdToStatus.get(sendTO).setChatWith(senderDetails.getWorkerId());
+
+        } else
+            sendTO = workerStatus.getChatWith();
+        message.setSender(senderDetails.getWorkerId());
+
+        simpMessagingTemplate.convertAndSendToUser(
+                sendTO, "queue/specific-user", message);
+
+        String chatId = buildChatId(senderDetails.getWorkerId(), sendTO);
+
+        if (chatIdToManager.containsKey(chatId) && chatIdToManager.get(chatId) != null) {
+            simpMessagingTemplate.convertAndSendToUser(
+                    chatIdToManager.get(chatId), "queue/specific-user", message);
+        }
     }
 
     public String getFirstAvailableWorker(Long shopId) {
@@ -50,7 +108,7 @@ public class SocketService {
         while (shopWorkersQueue.peek() != null) {
             String workerId = shopWorkersQueue.poll();
             WorkerStatus workerStatus = workerIdToStatus.get(workerId);
-            if (workerStatus == null || workerStatus.isBusy()) continue;
+            if (workerStatus == null || workerStatus.getChatWith() != null) continue;
             return workerId;
         }
         return null;

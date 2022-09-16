@@ -11,10 +11,12 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.messaging.support.GenericMessage;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.socket.messaging.SessionConnectEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
+import org.springframework.web.socket.messaging.SessionSubscribeEvent;
 
 import java.security.Principal;
 
@@ -25,8 +27,6 @@ public class SocketController {
     @Lazy
     private SocketService socketService;
 
-    @Autowired
-    private SimpMessagingTemplate simpMessagingTemplate;
 
     @EventListener
     public void onDisconnectEvent(SessionDisconnectEvent disconnectEvent) {
@@ -39,6 +39,16 @@ public class SocketController {
         WorkerDetails workerDetails = workerDetailsByPrincipal(connectEvent.getUser());
         socketService.setWorkerOnConnect(workerDetails);
     }
+    @EventListener
+    public void onUserSubscribe(SessionSubscribeEvent sessionSubscribeEvent)
+    {
+        WorkerDetails workerDetails = workerDetailsByPrincipal(sessionSubscribeEvent.getUser());
+        String userDestination = ((String) sessionSubscribeEvent.getMessage().getHeaders().get("simpDestination"));
+        if (userDestination != null && userDestination.startsWith("/user")) {
+            this.socketService.returnToChat(workerDetails);
+        }
+
+    }
 
     @MessageMapping("/chat.send")
     @SendTo("/topic/public")
@@ -49,11 +59,9 @@ public class SocketController {
     @MessageMapping("/secured/room")
     public void sendSpecific(
             @Payload Message msg,
-            Principal user,
-            @Header("simpSessionId") String sessionId) throws Exception {
+            Principal user) throws Exception {
 
-        simpMessagingTemplate.convertAndSendToUser(
-                msg.getSender(), "queue/specific-user", msg);
+        socketService.sendToUserByShopId(workerDetailsByPrincipal(user), msg);
     }
 
 
