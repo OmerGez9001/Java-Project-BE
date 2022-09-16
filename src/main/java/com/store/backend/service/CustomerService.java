@@ -1,7 +1,6 @@
 package com.store.backend.service;
 
 import com.store.backend.data.model.report.RegisterAction;
-import com.store.backend.exception.CustomerAlreadyExists;
 import com.store.backend.data.model.customer.AbstractCustomer;
 import com.store.backend.repository.CustomerRepository;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +26,7 @@ public class CustomerService {
         return this.customerRepository.findById(id).get();
     }
 
-    public void deleteWorker(String customerId) {
+    public void deleteCustomer(String customerId) {
         this.customerRepository.deleteById(customerId);
         this.registerLogService.registerWorkerLog(customerId, RegisterAction.DELETE);
     }
