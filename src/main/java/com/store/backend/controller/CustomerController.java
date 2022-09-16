@@ -22,14 +22,14 @@ public class CustomerController {
 
     @PostMapping
     public AbstractCustomer createCustomer(@RequestBody AbstractCustomer abstractCustomer) throws CustomerAlreadyExists {
-        return customerService.createCustomer(abstractCustomer);
+        return customerService.upsertCustomer(abstractCustomer);
     }
 
-    @PutMapping
-    public AbstractCustomer updateCustomer(@RequestBody AbstractCustomer abstractCustomer) {
-        return customerService.updateCustomer(abstractCustomer);
-
+    @DeleteMapping("/{id}")
+    public void deleteCustomer(@PathVariable String id) {
+        customerService.deleteCustomer(id);
     }
+
 
     @GetMapping
     public List<AbstractCustomer> getAllCustomers() {
