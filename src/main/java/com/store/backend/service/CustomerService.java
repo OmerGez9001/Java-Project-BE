@@ -28,7 +28,7 @@ public class CustomerService {
 
     public void deleteCustomer(String customerId) {
         this.customerRepository.deleteById(customerId);
-        this.registerLogService.registerWorkerLog(customerId, RegisterAction.DELETE);
+        this.registerLogService.registerCustomerLog(customerId, RegisterAction.DELETE);
     }
 
     public List<AbstractCustomer> customers() {

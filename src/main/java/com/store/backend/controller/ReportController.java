@@ -1,10 +1,12 @@
 package com.store.backend.controller;
 
 import com.store.backend.component.WordDocumentExporter;
+import com.store.backend.data.model.report.RegisterLog;
 import com.store.backend.service.ItemLogService;
 import com.store.backend.data.dto.SellsPerCategoryReport;
 import com.store.backend.data.dto.SellsPerItemReport;
 import com.store.backend.data.dto.SellsPerShopReport;
+import com.store.backend.service.RegisterLogService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,7 +18,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ReportController {
     private final ItemLogService itemLogService;
-    private final WordDocumentExporter exporter;
+
+    private final RegisterLogService registerLogService;
 
     @GetMapping("/shop")
     public List<SellsPerShopReport> getSellsPerShop() {
@@ -33,18 +36,9 @@ public class ReportController {
         return itemLogService.getSellsPerItem();
     }
 
-    @GetMapping("/shop/doc")
-    public void getSellsPerShopDoc() throws IOException {
-        exporter.createWordDocForShops(itemLogService.getSellsPerShop());
+    @GetMapping("/register")
+    public List<RegisterLog> getAllRegistersLog() {
+        return registerLogService.getAll();
     }
 
-    @GetMapping("/category/doc")
-    public void getSellsPerCategoryDoc() throws IOException {
-        exporter.createWordDocForCategory(itemLogService.getSellsPerCategory());
-    }
-
-    @GetMapping("/item/doc")
-    public void getSellsPerItemDoc() throws IOException {
-        exporter.createWordDocForItems(itemLogService.getSellsPerItem());
-    }
 }

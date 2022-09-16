@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class RegisterLogService {
@@ -27,5 +29,10 @@ public class RegisterLogService {
 
     public void registerWorkerLog(String registerId, RegisterAction action) {
         registerLog(registerId, action, RegisterType.WORKER);
+    }
+
+    public List<RegisterLog> getAll()
+    {
+        return registerLogRepository.findAll();
     }
 }
