@@ -1,6 +1,7 @@
 package com.store.backend.service;
 
 import com.store.backend.config.filter.UserWithClaims;
+import com.store.backend.data.model.report.RegisterLog;
 import com.store.backend.exception.UserAlreadyExists;
 import com.store.backend.data.model.worker.Job;
 import com.store.backend.data.model.worker.Worker;
@@ -27,10 +28,15 @@ public class WorkerService implements UserDetailsService {
     private final ShopRepository shopRepository;
     private final BCryptPasswordEncoder passwordEncoder;
 
+    private final RegisterLogService registerLogService;
+
+
     public Worker createWorker(Worker worker) {
         worker.setPassword(passwordEncoder.encode(worker.getPassword()));
         worker.setShop(shopRepository.findById(worker.getShop().getId()).get());
-        return this.workerRepository.save(worker);
+        Worker persistentWorker = this.workerRepository.save(worker);
+        this.registerLogService.registerLog(new RegisterLog());
+        return persistentWorker;
     }
 
     public Worker getWorker(String workerId) {
