@@ -37,4 +37,7 @@ public abstract class AbstractCustomer {
     @Column
     private String phoneNumber;
 
+    public abstract double sell(double price);
+
+    public abstract double buy(double price);
 }

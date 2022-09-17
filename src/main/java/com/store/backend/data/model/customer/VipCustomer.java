@@ -13,4 +13,13 @@ import javax.persistence.Entity;
 
 public class VipCustomer extends AbstractCustomer {
 
+    @Override
+    public double sell(double price) {
+        return price * 0.5;
+    }
+
+    @Override
+    public double buy(double price) {
+        return price * 0.5;
+    }
 }

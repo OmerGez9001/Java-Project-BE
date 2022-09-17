@@ -11,7 +11,16 @@ import javax.persistence.Entity;
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
-@ToString(callSuper=true)
+@ToString(callSuper = true)
 
-public class  RepeatCustomer extends AbstractCustomer {
+public class RepeatCustomer extends AbstractCustomer {
+    @Override
+    public double sell(double price) {
+        return price * 0.6;
+    }
+
+    @Override
+    public double buy(double price) {
+        return price*0.8;
+    }
 }

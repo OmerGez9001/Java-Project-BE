@@ -12,4 +12,13 @@ import javax.persistence.Entity;
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 
 public class NewCustomer extends AbstractCustomer {
+    @Override
+    public double sell(double price) {
+        return price * 0.6;
+    }
+
+    @Override
+    public double buy(double price) {
+        return price * 0.7;
+    }
 }

@@ -1,6 +1,7 @@
 package com.store.backend.data;
 
 import com.store.backend.data.dto.TransactionResult;
+import com.store.backend.data.model.customer.NewCustomer;
 import com.store.backend.service.ItemLogService;
 import com.store.backend.data.dto.SellsPerShopReport;
 import com.store.backend.data.dto.TransactionDetails;
@@ -130,7 +131,15 @@ public class DataLoader implements CommandLineRunner {
         vipCustomer.setFullName("Bleicherrr");
         vipCustomer.setId("Bleicher");
         vipCustomer.setPhoneNumber("0527222646");
+
+        NewCustomer newCustomer = new NewCustomer();
+
+        newCustomer.setFullName("Piunkim");
+        newCustomer.setId("Bleicher2");
+        newCustomer.setPhoneNumber("123123123");
+
         this.customerRepository.save(vipCustomer);
+        this.customerRepository.save(newCustomer);
 
     }
 

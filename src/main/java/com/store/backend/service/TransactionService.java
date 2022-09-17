@@ -47,7 +47,7 @@ public class TransactionService {
 
             double itemPrice = itemTransactionRequest.getQuantity() * existingItem.getItem().getPrice();
 
-            price += itemPrice;
+            price += abstractCustomer.buy(itemPrice);
 
             existingItem.setQuantity(existingItem.getQuantity() - itemTransactionRequest.getQuantity());
 
@@ -86,7 +86,7 @@ public class TransactionService {
                             .id(new ItemQuantityKey(itemTransactionRequest.getItemId(), transactionDetails.getShopId()))
                             .build());
 
-            price += itemTransactionRequest.getQuantity() * this.itemService.itemPrice(existingItem.getId().getItemId());
+            price += abstractCustomer.sell(itemTransactionRequest.getQuantity() * this.itemService.itemPrice(existingItem.getId().getItemId()));
 
             existingItem.setQuantity(existingItem.getQuantity() + itemTransactionRequest.getQuantity());
 
