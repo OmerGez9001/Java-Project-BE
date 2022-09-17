@@ -45,8 +45,13 @@ public class SocketService {
     }
 
     public void returnToChat(WorkerDetails workerDetails) {
-        Optional<ReturnChat> foundChat = returnChatRepository.findByToShopId(workerDetails.getShopId());
-        foundChat.ifPresent(returnChat -> sendToUserByShopId(new WorkerDetails(returnChat.getWorkerId(), returnChat.getFromShopId()), new Message(returnChat.getContent(), workerDetails.getWorkerId(), returnChat.getToShopId())));
+        List<ReturnChat> chats = returnChatRepository.findAllByToShopIdOrderByCreated(workerDetails.getShopId());
+        if (!chats.isEmpty()) {
+            String firstWorkerToSendMessage = chats.get(0).getWorkerId();
+            List<ReturnChat> chatsFromWorker = chats.stream().filter(x -> x.getWorkerId().equals(firstWorkerToSendMessage)).toList();
+            chatsFromWorker.forEach(returnChat -> sendToUserByShopId(new WorkerDetails(returnChat.getWorkerId(), returnChat.getFromShopId()), new Message(returnChat.getContent(), workerDetails.getWorkerId(), returnChat.getToShopId())));
+            this.returnChatRepository.deleteAll(chatsFromWorker);
+        }
     }
 
     public List<String> getAllExistingChats() {
@@ -78,7 +83,13 @@ public class SocketService {
         if (workerStatus.getChatWith().isEmpty()) {
             sendTO = getFirstAvailableWorker(message.getShopId());
             if (sendTO == null) {
-                returnChatRepository.save(new ReturnChat(senderDetails.getWorkerId(), senderDetails.getShopId(), message.getShopId(), message.getContent()));
+                returnChatRepository.save(ReturnChat
+                        .builder()
+                        .workerId(senderDetails.getWorkerId())
+                        .fromShopId(senderDetails.getShopId())
+                        .toShopId(message.getShopId())
+                        .content(message.getContent())
+                        .build());
                 return;
             }
             workerStatus.getChatWith().add(sendTO);

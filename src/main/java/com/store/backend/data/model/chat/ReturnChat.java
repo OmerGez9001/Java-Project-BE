@@ -4,11 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.Date;
 
 
 @Entity(name = "return_chat")
@@ -19,6 +18,9 @@ import javax.persistence.Table;
 @NoArgsConstructor
 public class ReturnChat {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Column
     private String workerId;
     @Column
     private Long fromShopId;
@@ -26,4 +28,7 @@ public class ReturnChat {
     private Long toShopId;
     @Column
     private String content;
+    @Column(nullable = false, updatable = false)
+    @CreationTimestamp
+    private Date created;
 }
