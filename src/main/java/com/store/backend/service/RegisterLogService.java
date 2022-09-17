@@ -31,7 +31,7 @@ public class RegisterLogService {
         registerLog(registerId, action, RegisterType.WORKER);
     }
 
-    public List<RegisterLog> getAll()
+    public List<RegisterLog> getAllByRegisterType(RegisterType registerType)
     {
         return registerLogRepository.findAll();
     }

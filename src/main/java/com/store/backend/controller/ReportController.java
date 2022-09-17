@@ -2,6 +2,7 @@ package com.store.backend.controller;
 
 import com.store.backend.component.WordDocumentExporter;
 import com.store.backend.data.model.report.RegisterLog;
+import com.store.backend.data.model.report.RegisterType;
 import com.store.backend.service.ItemLogService;
 import com.store.backend.data.dto.SellsPerCategoryReport;
 import com.store.backend.data.dto.SellsPerItemReport;
@@ -36,9 +37,14 @@ public class ReportController {
         return itemLogService.getSellsPerItem();
     }
 
-    @GetMapping("/register")
-    public List<RegisterLog> getAllRegistersLog() {
-        return registerLogService.getAll();
+    @GetMapping("/customer")
+    public List<RegisterLog> getAllCustomerLog() {
+        return registerLogService.getAllByRegisterType(RegisterType.CUSTOMER);
+    }
+
+    @GetMapping("/worker")
+    public List<RegisterLog> getAllWorkersLog() {
+        return registerLogService.getAllByRegisterType(RegisterType.WORKER);
     }
 
 }
