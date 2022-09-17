@@ -3,8 +3,11 @@ package com.store.backend.data.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 public class WorkerStatus {
-    private String chatWith;
+    private List<String> chatWith;
 }

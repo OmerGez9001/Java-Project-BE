@@ -29,8 +29,6 @@ public class SocketService {
 
     private final Map<String, WorkerStatus> workerIdToStatus = new HashMap<>();
 
-    private final Map<String, String> chatIdToManager = new HashMap<>();
-
     private final ReturnChatRepository returnChatRepository;
 
 
@@ -41,7 +39,7 @@ public class SocketService {
 
     @SneakyThrows
     public void setWorkerOnConnect(WorkerDetails workerDetails) {
-        workerIdToStatus.put(workerDetails.getWorkerId(), new WorkerStatus(null));
+        workerIdToStatus.put(workerDetails.getWorkerId(), new WorkerStatus(new ArrayList<>()));
         Queue<String> shopWorkersQueue = shopIdToWorkersId.get(workerDetails.getShopId());
         shopWorkersQueue.add(workerDetails.getWorkerId());
     }
@@ -51,23 +49,18 @@ public class SocketService {
         foundChat.ifPresent(returnChat -> sendToUserByShopId(new WorkerDetails(returnChat.getWorkerId(), returnChat.getFromShopId()), new Message(returnChat.getContent(), workerDetails.getWorkerId(), returnChat.getToShopId())));
     }
 
-    @SneakyThrows
-
-    public void setWorkerBusy(String workerId, String chatWith) {
-        WorkerStatus workerStatus = workerIdToStatus.get(workerId);
-        workerStatus.setChatWith(chatWith);
-    }
-
-    public String buildChatId(String workerSender, String workerReceiver) {
-        return Stream.of(workerSender, workerReceiver).sorted().reduce("", (first, second) -> first + second);
-    }
-
-    public void addManager(String chatId, String managerId) {
-        chatIdToManager.put(chatId, managerId);
-    }
-
-    public Set<String> getExistingChatsIds() {
-        return chatIdToManager.keySet();
+    public void addManager(String workerId, String managerId) {
+        WorkerStatus managerStatus = workerIdToStatus.get(managerId);
+        if (managerStatus.getChatWith().isEmpty()) {
+            WorkerStatus workerStatus = workerIdToStatus.get(workerId);
+            List<String> otherWorkerIds = workerStatus.getChatWith();
+            for (String otherWorkerId : otherWorkerIds) {
+                managerStatus.getChatWith().add(otherWorkerId);
+                workerIdToStatus.get(otherWorkerId).getChatWith().add(managerId);
+            }
+            workerStatus.getChatWith().add(managerId);
+            managerStatus.getChatWith().add(workerId);
+        }
     }
 
     public void setWorkerOnDisconnect(String workerId) {
@@ -78,28 +71,20 @@ public class SocketService {
         WorkerStatus workerStatus = workerIdToStatus.get(senderDetails.getWorkerId());
         String sendTO;
 
-        if (workerStatus.getChatWith() == null) {
+        if (workerStatus.getChatWith().isEmpty()) {
             sendTO = getFirstAvailableWorker(message.getShopId());
             if (sendTO == null) {
                 returnChatRepository.save(new ReturnChat(senderDetails.getWorkerId(), senderDetails.getShopId(), message.getShopId(), message.getContent()));
                 return;
             }
-            chatIdToManager.put(buildChatId(senderDetails.getWorkerId(), sendTO), null);
-            workerStatus.setChatWith(sendTO);
-            workerIdToStatus.get(sendTO).setChatWith(senderDetails.getWorkerId());
+            workerStatus.getChatWith().add(sendTO);
+            workerIdToStatus.get(sendTO).getChatWith().add(senderDetails.getWorkerId());
 
-        } else
-            sendTO = workerStatus.getChatWith();
+        }
         message.setSender(senderDetails.getWorkerId());
-
-        simpMessagingTemplate.convertAndSendToUser(
-                sendTO, "queue/specific-user", message);
-
-        String chatId = buildChatId(senderDetails.getWorkerId(), sendTO);
-
-        if (chatIdToManager.containsKey(chatId) && chatIdToManager.get(chatId) != null) {
-            simpMessagingTemplate.convertAndSendToUser(
-                    chatIdToManager.get(chatId), "queue/specific-user", message);
+        for (String sendTo : workerStatus.getChatWith()) {
+            message.setSender(senderDetails.getWorkerId());
+            simpMessagingTemplate.convertAndSendToUser(sendTo, "queue/specific-user", message);
         }
     }
 
@@ -108,7 +93,7 @@ public class SocketService {
         while (shopWorkersQueue.peek() != null) {
             String workerId = shopWorkersQueue.poll();
             WorkerStatus workerStatus = workerIdToStatus.get(workerId);
-            if (workerStatus == null || workerStatus.getChatWith() != null) continue;
+            if (workerStatus == null || !workerStatus.getChatWith().isEmpty()) continue;
             return workerId;
         }
         return null;
