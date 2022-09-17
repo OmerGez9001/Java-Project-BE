@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.util.*;
-import java.util.stream.Stream;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -47,6 +47,10 @@ public class SocketService {
     public void returnToChat(WorkerDetails workerDetails) {
         Optional<ReturnChat> foundChat = returnChatRepository.findByToShopId(workerDetails.getShopId());
         foundChat.ifPresent(returnChat -> sendToUserByShopId(new WorkerDetails(returnChat.getWorkerId(), returnChat.getFromShopId()), new Message(returnChat.getContent(), workerDetails.getWorkerId(), returnChat.getToShopId())));
+    }
+
+    public List<String> getAllExistingChats() {
+        return workerIdToStatus.values().stream().map(WorkerStatus::getChatWith).flatMap(Collection::stream).distinct().collect(Collectors.toList());
     }
 
     public void addManager(String workerId, String managerId) {

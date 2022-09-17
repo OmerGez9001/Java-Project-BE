@@ -2,6 +2,7 @@ package com.store.backend.config;
 
 import com.store.backend.config.filter.AuthenticationFilter;
 import com.store.backend.config.filter.AuthorizationFilter;
+import com.store.backend.data.model.worker.Job;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -50,6 +51,7 @@ public class SecurityConfig{
 
 
         http.authorizeRequests().antMatchers("/api/worker/**").hasAnyAuthority("ADMIN");
+        http.authorizeRequests().antMatchers("/api/chat/**").hasAnyAuthority(Job.SHIFT_SUPERVISOR.name());
         http.authorizeRequests().anyRequest().authenticated();
 
         http.addFilter(new AuthenticationFilter(authenticationManager));
