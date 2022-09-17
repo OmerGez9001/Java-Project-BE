@@ -47,7 +47,6 @@ public class SocketController {
         if (userDestination != null && userDestination.startsWith("/user")) {
             this.socketService.returnToChat(workerDetails);
         }
-
     }
 
     @MessageMapping("/chat.send")

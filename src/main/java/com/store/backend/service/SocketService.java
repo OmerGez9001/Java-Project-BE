@@ -39,9 +39,30 @@ public class SocketService {
 
     @SneakyThrows
     public void setWorkerOnConnect(WorkerDetails workerDetails) {
-        workerIdToStatus.put(workerDetails.getWorkerId(), new WorkerStatus(new ArrayList<>()));
-        Queue<String> shopWorkersQueue = shopIdToWorkersId.get(workerDetails.getShopId());
-        shopWorkersQueue.add(workerDetails.getWorkerId());
+        if (!workerIdToStatus.containsKey(workerDetails.getWorkerId())) {
+            workerIdToStatus.put(workerDetails.getWorkerId(), new WorkerStatus(new ArrayList<>(), true));
+            Queue<String> shopWorkersQueue = shopIdToWorkersId.get(workerDetails.getShopId());
+            shopWorkersQueue.add(workerDetails.getWorkerId());
+        } else
+            this.workerIdToStatus.get(workerDetails.getWorkerId()).setConnected(true);
+
+        sendConnectMessage(workerDetails.getWorkerId());
+    }
+
+    @SneakyThrows
+    public void sendDisconnectMessage(String workerId) {
+        List<String> chatWith = this.workerIdToStatus.get(workerId).getChatWith();
+        for (String worker : chatWith) {
+            simpMessagingTemplate.convertAndSendToUser(worker, "queue/specific-user", new Message(workerId + " has been disconnected from the chat", "SERVER", null));
+        }
+    }
+
+    @SneakyThrows
+    public void sendConnectMessage(String workerId) {
+        List<String> chatWith = this.workerIdToStatus.get(workerId).getChatWith();
+        for (String worker : chatWith) {
+            simpMessagingTemplate.convertAndSendToUser(worker, "queue/specific-user", new Message(workerId + " has been connected to the chat", "SERVER", null));
+        }
     }
 
     public void returnToChat(WorkerDetails workerDetails) {
@@ -73,7 +94,8 @@ public class SocketService {
     }
 
     public void setWorkerOnDisconnect(String workerId) {
-        workerIdToStatus.remove(workerId);
+        sendDisconnectMessage(workerId);
+        workerIdToStatus.get(workerId).setConnected(false);
     }
 
     public void sendToUserByShopId(WorkerDetails senderDetails, Message message) {
@@ -94,7 +116,8 @@ public class SocketService {
             }
             workerStatus.getChatWith().add(sendTO);
             workerIdToStatus.get(sendTO).getChatWith().add(senderDetails.getWorkerId());
-
+            sendConnectMessage(sendTO);
+            sendConnectMessage(senderDetails.getWorkerId());
         }
         message.setSender(senderDetails.getWorkerId());
         for (String sendTo : workerStatus.getChatWith()) {
@@ -108,7 +131,7 @@ public class SocketService {
         while (shopWorkersQueue.peek() != null) {
             String workerId = shopWorkersQueue.poll();
             WorkerStatus workerStatus = workerIdToStatus.get(workerId);
-            if (workerStatus == null || !workerStatus.getChatWith().isEmpty()) continue;
+            if (workerStatus == null || !workerStatus.getChatWith().isEmpty() || !workerStatus.isConnected()) continue;
             return workerId;
         }
         return null;

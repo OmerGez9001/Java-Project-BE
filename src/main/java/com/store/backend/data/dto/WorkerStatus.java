@@ -10,4 +10,5 @@ import java.util.List;
 @AllArgsConstructor
 public class WorkerStatus {
     private List<String> chatWith;
+    private boolean isConnected;
 }
