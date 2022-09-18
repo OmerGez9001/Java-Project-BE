@@ -84,14 +84,44 @@ public class DataLoader implements CommandLineRunner {
                 .workerId("123")
                 .password(passwordEncoder.encode("123"))
                 .id("208632754")
-                .fullName("Bukaki Bleicher")
+                .fullName("Shon Bleicher")
                 .phoneNumber("123123123132")
                 .accountNumber("123123123")
                 .job(Job.SHIFT_SUPERVISOR)
                 .shop(shopRepository.findById(2L).get()).build();
 
+        Worker worker4 = Worker.builder()
+                .workerId("Avi")
+                .password(passwordEncoder.encode("Avi"))
+                .id("31624587")
+                .fullName("Avi Levi")
+                .phoneNumber("05472837462")
+                .accountNumber("11112211")
+                .job(Job.SELLER)
+                .shop(shopRepository.findById(1L).get()).build();
 
-        workerRepository.saveAll(Arrays.asList(worker, worker2, worker3));
+        Worker worker5 = Worker.builder()
+                .workerId("Dan")
+                .password(passwordEncoder.encode("Dan"))
+                .id("31624587")
+                .fullName("Dan Cohen")
+                .phoneNumber("0547976473")
+                .accountNumber("11112222")
+                .job(Job.CASHIER)
+                .shop(shopRepository.findById(2L).get()).build();
+
+        Worker worker6 = Worker.builder()
+                .workerId("Ron")
+                .password(passwordEncoder.encode("Ron"))
+                .id("31624587")
+                .fullName("Ron Yizhak")
+                .phoneNumber("0547975555")
+                .accountNumber("11112223")
+                .job(Job.SHIFT_SUPERVISOR)
+                .shop(shopRepository.findById(2L).get()).build();
+
+
+        workerRepository.saveAll(Arrays.asList(worker, worker2, worker3, worker4, worker5, worker6));
     }
 
     private void createShops() {
