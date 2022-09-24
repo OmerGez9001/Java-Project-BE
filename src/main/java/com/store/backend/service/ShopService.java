@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -18,8 +19,8 @@ public class ShopService {
             throw new ShopAlreadyExists("Shop already exists: " + shop.getId());
         return shopRepository.save(shop);
     }
-    public Shop getShop(Long shopId){
-        return shopRepository.findById(shopId).get();
+    public Optional<Shop> getShop(Long shopId){
+        return shopRepository.findById(shopId);
     }
 
     public Shop updateShop(Shop shop) {

@@ -29,7 +29,7 @@ public class ItemLogService {
         return itemLogRepository
                 .fetchSellsPerShop()
                 .stream()
-                .map(x -> SellsPerShopReport.builder().shop(shopService.getShop(Long.valueOf(x.getSubject()))).sells(x.getCount()).build())
+                .map(x -> SellsPerShopReport.builder().shop(shopService.getShop(Long.valueOf(x.getSubject())).get()).sells(x.getCount()).build())
                 .sorted(Comparator.comparing(SellsPerShopReport::getSells, Comparator.reverseOrder()).thenComparing(o -> o.getShop().getShopName()))
                 .toList();
     }

@@ -33,7 +33,7 @@ public class TransactionService {
         double price = 0;
         String transactionId = UUID.randomUUID().toString();
 
-        AbstractCustomer abstractCustomer = customerService.getCustomer(transactionDetails.getCustomerId());
+        AbstractCustomer abstractCustomer = customerService.getCustomer(transactionDetails.getCustomerId()).get();
 
         List<Long> itemIds = transactionDetails.getItems().stream().map(ItemTransactionRequest::getItemId).toList();
 
@@ -70,7 +70,7 @@ public class TransactionService {
         double price = 0;
 
         String transactionId = UUID.randomUUID().toString();
-        AbstractCustomer abstractCustomer = customerService.getCustomer(transactionDetails.getCustomerId());
+        AbstractCustomer abstractCustomer = customerService.getCustomer(transactionDetails.getCustomerId()).get();
 
         List<Long> itemIds = transactionDetails.getItems().stream().map(ItemTransactionRequest::getItemId).toList();
 

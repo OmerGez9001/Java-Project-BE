@@ -6,6 +6,7 @@ import com.store.backend.data.model.shop.Shop;
 import com.store.backend.service.ItemService;
 import com.store.backend.service.ShopService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,23 +21,23 @@ public class ShopController {
     private final ItemService itemService;
 
     @GetMapping("/{id}")
-    public Shop getShop(@PathVariable("id") Long id) {
-        return shopService.getShop(id);
+    public ResponseEntity<Shop> getShop(@PathVariable("id") Long id) {
+        return ResponseEntity.of(shopService.getShop(id));
     }
 
     @GetMapping("/{id}/items")
-    public List<ItemQuantity> getShopItems(@PathVariable("id") Long id) {
-        return itemService.fetchShopItems(id);
+    public ResponseEntity<List<ItemQuantity>> getShopItems(@PathVariable("id") Long id) {
+        return ResponseEntity.ok(itemService.fetchShopItems(id));
     }
 
     @PostMapping
-    public Shop createShop(Shop shop) throws ShopAlreadyExists {
-        return shopService.createShop(shop);
+    public ResponseEntity<Shop> createShop(Shop shop) throws ShopAlreadyExists {
+        return ResponseEntity.ok(shopService.createShop(shop));
     }
 
     @PutMapping
-    public Shop updateShop(Shop shop) {
-        return shopService.updateShop(shop);
+    public ResponseEntity<Shop> updateShop(Shop shop) {
+        return ResponseEntity.ok(shopService.updateShop(shop));
     }
 
     @GetMapping

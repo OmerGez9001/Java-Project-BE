@@ -2,15 +2,12 @@ package com.store.backend.service;
 
 import com.store.backend.config.filter.UserWithClaims;
 import com.store.backend.data.model.report.RegisterAction;
-import com.store.backend.data.model.report.RegisterLog;
-import com.store.backend.exception.UserAlreadyExists;
 import com.store.backend.data.model.worker.Job;
 import com.store.backend.data.model.worker.Worker;
 import com.store.backend.repository.ShopRepository;
 import com.store.backend.repository.WorkerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -20,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -41,8 +39,8 @@ public class WorkerService implements UserDetailsService {
         return persistentWorker;
     }
 
-    public Worker getWorker(String workerId) {
-        return this.workerRepository.findById(workerId).get();
+    public Optional<Worker> getWorker(String workerId) {
+        return this.workerRepository.findById(workerId);
     }
 
     public List<Worker> workers() {

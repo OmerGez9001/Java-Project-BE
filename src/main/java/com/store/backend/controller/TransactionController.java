@@ -6,6 +6,7 @@ import com.store.backend.exception.ItemNotEnoughQuantity;
 import com.store.backend.exception.ItemNotExistsInShop;
 import com.store.backend.service.TransactionService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -16,13 +17,13 @@ public class TransactionController {
     private final TransactionService transactionService;
 
     @PostMapping("/buy")
-    public TransactionResult buy(@RequestBody  TransactionDetails transactionDetails) throws ItemNotExistsInShop, ItemNotEnoughQuantity {
-        return transactionService.buy(transactionDetails);
+    public ResponseEntity<TransactionResult> buy(@RequestBody  TransactionDetails transactionDetails) throws ItemNotExistsInShop, ItemNotEnoughQuantity {
+        return ResponseEntity.ok(transactionService.buy(transactionDetails));
     }
 
     @PostMapping("/sell")
-    public TransactionResult TransactionResult(@RequestBody  TransactionDetails transactionDetails) throws ItemNotExistsInShop, ItemNotEnoughQuantity {
-        return transactionService.sell(transactionDetails);
+    public ResponseEntity<TransactionResult> TransactionResult(@RequestBody  TransactionDetails transactionDetails) throws ItemNotExistsInShop, ItemNotEnoughQuantity {
+        return ResponseEntity.ok(transactionService.sell(transactionDetails));
     }
 
 }

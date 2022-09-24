@@ -1,9 +1,9 @@
 package com.store.backend.controller;
 
 import com.store.backend.data.model.worker.Worker;
-import com.store.backend.exception.UserAlreadyExists;
 import com.store.backend.service.WorkerService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,23 +15,24 @@ public class WorkerController {
     private final WorkerService workerService;
 
     @GetMapping("/{id}")
-    public Worker getWorker(@PathVariable String id) {
-        return workerService.getWorker(id);
+    public ResponseEntity<Worker> getWorker(@PathVariable String id) {
+        return ResponseEntity.of(workerService.getWorker(id));
     }
 
     @PostMapping
-    public Worker upsertWorker(@RequestBody Worker worker) throws UserAlreadyExists {
-        return workerService.createWorker(worker);
+    public ResponseEntity<Worker> upsertWorker(@RequestBody Worker worker) {
+        return ResponseEntity.ok(workerService.createWorker(worker));
     }
 
     @DeleteMapping("/{id}")
-    public void deleteWorker(@PathVariable String id) {
+    public ResponseEntity<Object> deleteWorker(@PathVariable String id) {
         workerService.deleteWorker(id);
+        return ResponseEntity.ok().build();
     }
 
 
     @GetMapping
-    public List<Worker> getAllWorkers() {
-        return workerService.workers();
+    public ResponseEntity<List<Worker>> getAllWorkers() {
+        return ResponseEntity.ok(workerService.workers());
     }
 }

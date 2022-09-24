@@ -58,7 +58,7 @@ public class SocketController {
     @MessageMapping("/secured/room")
     public void sendSpecific(
             @Payload Message msg,
-            Principal user) throws Exception {
+            Principal user) {
 
         socketService.sendToUserByShopId(workerDetailsByPrincipal(user), msg);
     }

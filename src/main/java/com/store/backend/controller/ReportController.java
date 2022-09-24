@@ -1,6 +1,5 @@
 package com.store.backend.controller;
 
-import com.store.backend.component.WordDocumentExporter;
 import com.store.backend.data.model.report.RegisterLog;
 import com.store.backend.data.model.report.RegisterType;
 import com.store.backend.service.ItemLogService;
@@ -9,9 +8,9 @@ import com.store.backend.data.dto.SellsPerItemReport;
 import com.store.backend.data.dto.SellsPerShopReport;
 import com.store.backend.service.RegisterLogService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -23,28 +22,28 @@ public class ReportController {
     private final RegisterLogService registerLogService;
 
     @GetMapping("/shop")
-    public List<SellsPerShopReport> getSellsPerShop() {
-        return itemLogService.getSellsPerShop();
+    public ResponseEntity<List<SellsPerShopReport>> getSellsPerShop() {
+        return ResponseEntity.ok(itemLogService.getSellsPerShop());
     }
 
     @GetMapping("/category")
-    public List<SellsPerCategoryReport> getSellsPerCategory() {
-        return itemLogService.getSellsPerCategory();
+    public ResponseEntity<List<SellsPerCategoryReport>> getSellsPerCategory() {
+        return ResponseEntity.ok(itemLogService.getSellsPerCategory());
     }
 
     @GetMapping("/item")
-    public List<SellsPerItemReport> getSellsPerItem() {
-        return itemLogService.getSellsPerItem();
+    public ResponseEntity<List<SellsPerItemReport>> getSellsPerItem() {
+        return ResponseEntity.ok(itemLogService.getSellsPerItem());
     }
 
     @GetMapping("/customer")
-    public List<RegisterLog> getAllCustomerLog() {
-        return registerLogService.getAllByRegisterType(RegisterType.CUSTOMER);
+    public ResponseEntity<List<RegisterLog>> getAllCustomerLog() {
+        return ResponseEntity.ok(registerLogService.getAllByRegisterType(RegisterType.CUSTOMER));
     }
 
     @GetMapping("/worker")
-    public List<RegisterLog> getAllWorkersLog() {
-        return registerLogService.getAllByRegisterType(RegisterType.WORKER);
+    public ResponseEntity<List<RegisterLog>> getAllWorkersLog() {
+        return ResponseEntity.ok(registerLogService.getAllByRegisterType(RegisterType.WORKER));
     }
 
 }

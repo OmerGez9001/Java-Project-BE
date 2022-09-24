@@ -4,6 +4,7 @@ import com.store.backend.data.dto.WorkerDetails;
 import com.store.backend.service.SocketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,14 +20,15 @@ public class SocketApiController {
 
 
     @PostMapping("/{chatId}")
-    public void addToChatId(@PathVariable String chatId, Principal user) {
+    public ResponseEntity<Object> addToChatId(@PathVariable String chatId, Principal user) {
         socketService.addManager(chatId, workerDetailsByPrincipal(user).getWorkerId());
+        return ResponseEntity.ok().build();
 
     }
 
     @GetMapping
-    public List<String> getAllExistingChats() {
-        return socketService.getAllExistingChats();
+    public ResponseEntity<List<String>> getAllExistingChats() {
+        return ResponseEntity.ok(socketService.getAllExistingChats());
     }
 
     private WorkerDetails workerDetailsByPrincipal(Principal principal) {
