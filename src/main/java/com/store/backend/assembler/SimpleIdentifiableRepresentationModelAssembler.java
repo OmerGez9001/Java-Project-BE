@@ -27,9 +27,14 @@ import org.springframework.hateoas.server.LinkRelationProvider;
 import org.springframework.hateoas.server.SimpleRepresentationModelAssembler;
 import org.springframework.hateoas.server.core.EvoInflectorLinkRelationProvider;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
+import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 
@@ -93,6 +98,14 @@ public class SimpleIdentifiableRepresentationModelAssembler<T> implements Simple
         this(controllerClass, new EvoInflectorLinkRelationProvider());
     }
 
+    public CollectionModel<EntityModel<T>> toCollectionModel(List<? extends T> entities) {
+        Assert.notNull(entities, "entities must not be null!");
+        List<EntityModel<T>> resourceList = entities.stream().map(this::toModel).collect(Collectors.toList());
+        CollectionModel<EntityModel<T>> resources = CollectionModel.of(resourceList);
+        this.addLinks(resources);
+        return resources;
+    }
+
     /**
      * Add single item self link based on the object and link back to aggregate root of the {@literal T} domain type using
      * {@link LinkRelationProvider#getCollectionResourceRelFor(Class)}}.
@@ -149,4 +162,6 @@ public class SimpleIdentifiableRepresentationModelAssembler<T> implements Simple
     private String getPrefix() {
         return getBasePath().isEmpty() ? "" : getBasePath() + "/";
     }
+
+
 }
