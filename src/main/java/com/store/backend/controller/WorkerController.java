@@ -1,12 +1,16 @@
 package com.store.backend.controller;
 
+import com.store.backend.assembler.WorkerDtoAssembler;
+import com.store.backend.data.dto.WorkerDto;
 import com.store.backend.data.model.worker.Worker;
 import com.store.backend.service.WorkerService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("api/worker")
@@ -14,14 +18,17 @@ import java.util.List;
 public class WorkerController {
     private final WorkerService workerService;
 
+    private final WorkerDtoAssembler workerDtoAssembler;
+
+
     @GetMapping("/{id}")
-    public ResponseEntity<Worker> getWorker(@PathVariable String id) {
-        return ResponseEntity.of(workerService.getWorker(id));
+    public ResponseEntity<EntityModel<WorkerDto>> getWorker(@PathVariable String id) {
+        return ResponseEntity.of(workerService.getWorker(id).map(WorkerDto::new).map(workerDtoAssembler::toModel));
     }
 
     @PostMapping
-    public ResponseEntity<Worker> upsertWorker(@RequestBody Worker worker) {
-        return ResponseEntity.ok(workerService.createWorker(worker));
+    public ResponseEntity<EntityModel<WorkerDto>> upsertWorker(@RequestBody Worker worker) {
+        return ResponseEntity.ok(workerDtoAssembler.toModel(new WorkerDto(workerService.createWorker(worker))));
     }
 
     @DeleteMapping("/{id}")
@@ -32,7 +39,7 @@ public class WorkerController {
 
 
     @GetMapping
-    public ResponseEntity<List<Worker>> getAllWorkers() {
-        return ResponseEntity.ok(workerService.workers());
+    public CollectionModel<EntityModel<WorkerDto>> getAllWorkers() {
+        return workerDtoAssembler.toCollectionModel(workerService.workers().stream().map(WorkerDto::new).collect(Collectors.toList()));
     }
 }
