@@ -2,7 +2,7 @@ package com.store.backend.service;
 
 import com.store.backend.exception.ShopAlreadyExists;
 import com.store.backend.data.model.shop.Shop;
-import com.store.backend.repository.ShopRepository;
+import com.store.backend.repository.sql.ShopRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

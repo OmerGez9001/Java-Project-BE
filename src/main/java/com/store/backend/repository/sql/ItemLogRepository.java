@@ -1,4 +1,4 @@
-package com.store.backend.repository;
+package com.store.backend.repository.sql;
 
 import com.store.backend.data.dto.SubjectWithCount;
 import com.store.backend.data.model.report.ItemLog;

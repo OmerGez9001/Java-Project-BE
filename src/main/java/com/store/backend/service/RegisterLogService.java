@@ -3,7 +3,7 @@ package com.store.backend.service;
 import com.store.backend.data.model.report.RegisterAction;
 import com.store.backend.data.model.report.RegisterLog;
 import com.store.backend.data.model.report.RegisterType;
-import com.store.backend.repository.RegisterLogRepository;
+import com.store.backend.repository.sql.RegisterLogRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;

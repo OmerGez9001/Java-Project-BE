@@ -6,9 +6,9 @@ import com.store.backend.exception.ItemNotExistsInShop;
 import com.store.backend.data.model.shop.Item;
 import com.store.backend.data.model.shop.ItemQuantity;
 import com.store.backend.data.model.shop.ItemQuantityKey;
-import com.store.backend.repository.ItemQuantityRepository;
-import com.store.backend.repository.ItemRepository;
-import com.store.backend.repository.ShopRepository;
+import com.store.backend.repository.sql.ItemQuantityRepository;
+import com.store.backend.repository.sql.ItemRepository;
+import com.store.backend.repository.sql.ShopRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

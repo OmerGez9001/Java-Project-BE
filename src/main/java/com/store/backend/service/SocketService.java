@@ -4,7 +4,7 @@ import com.store.backend.data.dto.Message;
 import com.store.backend.data.dto.WorkerDetails;
 import com.store.backend.data.dto.WorkerStatus;
 import com.store.backend.data.model.chat.ReturnChat;
-import com.store.backend.repository.ReturnChatRepository;
+import com.store.backend.repository.sql.ReturnChatRepository;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.commons.collections4.queue.SynchronizedQueue;

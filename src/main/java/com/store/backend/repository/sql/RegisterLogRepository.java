@@ -1,4 +1,4 @@
-package com.store.backend.repository;
+package com.store.backend.repository.sql;
 
 import com.store.backend.data.model.report.RegisterLog;
 import com.store.backend.data.model.report.RegisterType;

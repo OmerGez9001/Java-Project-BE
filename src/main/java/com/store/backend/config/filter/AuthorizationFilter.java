@@ -5,6 +5,11 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.store.backend.data.dto.WorkerDetails;
+import com.store.backend.data.model.login.LoginMetadata;
+import com.store.backend.exception.NewTokenWasProvided;
+import com.store.backend.exception.TokenNotFound;
+import com.store.backend.repository.redis.LoginMetadataRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,14 +22,18 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Optional;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
+@RequiredArgsConstructor
 public class AuthorizationFilter extends OncePerRequestFilter {
+    private final LoginMetadataRepository repository;
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         System.out.println(request.getServletPath());
-        if (request.getServletPath().equals("/api/login")) {
+        if (request.getServletPath().equals("/api/login") || request.getServletPath().equals("/")) {
             filterChain.doFilter(request, response);
         } else {
             String authorizationHeader = request.getHeader(AUTHORIZATION) != null ? request.getHeader(AUTHORIZATION) : request.getParameter("Authorization");
@@ -32,6 +41,11 @@ public class AuthorizationFilter extends OncePerRequestFilter {
             Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
             JWTVerifier verifier = JWT.require(algorithm).build();
             DecodedJWT decodedJWT = verifier.verify(token);
+            String decodedJwtId = decodedJWT.getId();
+            String lastJwtId = repository.findById(decodedJWT.getSubject()).orElseThrow(TokenNotFound::new).getJwtID();
+            if (!lastJwtId.equals(decodedJwtId))
+                throw new NewTokenWasProvided(decodedJWT.getSubject());
+
             String username = decodedJWT.getSubject();
             String[] roles = decodedJWT.getClaim("roles").asArray(String.class);
             Long shopId = decodedJWT.getClaims().get("shop").as(Long.class);

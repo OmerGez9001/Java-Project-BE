@@ -4,7 +4,7 @@ import com.store.backend.data.dto.SellsPerItemReport;
 import com.store.backend.data.dto.SellsPerShopReport;
 import com.store.backend.data.dto.SellsPerCategoryReport;
 import com.store.backend.data.model.report.ItemLog;
-import com.store.backend.repository.ItemLogRepository;
+import com.store.backend.repository.sql.ItemLogRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

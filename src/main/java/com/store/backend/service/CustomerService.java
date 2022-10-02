@@ -2,7 +2,7 @@ package com.store.backend.service;
 
 import com.store.backend.data.model.report.RegisterAction;
 import com.store.backend.data.model.customer.AbstractCustomer;
-import com.store.backend.repository.CustomerRepository;
+import com.store.backend.repository.sql.CustomerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
