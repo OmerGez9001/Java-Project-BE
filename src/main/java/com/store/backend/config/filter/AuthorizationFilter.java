@@ -5,7 +5,6 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.store.backend.data.dto.WorkerDetails;
-import com.store.backend.data.model.login.LoginMetadata;
 import com.store.backend.exception.NewTokenWasProvided;
 import com.store.backend.exception.TokenNotFound;
 import com.store.backend.repository.redis.LoginMetadataRepository;
@@ -22,7 +21,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Optional;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
@@ -32,7 +30,6 @@ public class AuthorizationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        System.out.println(request.getServletPath());
         if (request.getServletPath().equals("/api/login") || request.getServletPath().equals("/")) {
             filterChain.doFilter(request, response);
         } else {
