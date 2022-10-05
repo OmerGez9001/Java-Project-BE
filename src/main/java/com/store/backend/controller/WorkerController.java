@@ -28,7 +28,7 @@ public class WorkerController {
 
     @PostMapping
     public ResponseEntity<EntityModel<WorkerDto>> upsertWorker(@RequestBody Worker worker) {
-        return ResponseEntity.ok(workerDtoAssembler.toModel(new WorkerDto(workerService.createWorker(worker))));
+        return ResponseEntity.ok(workerDtoAssembler.toModel(new WorkerDto(workerService.upsertWorker(worker))));
     }
 
     @DeleteMapping("/{id}")

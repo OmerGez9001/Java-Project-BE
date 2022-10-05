@@ -8,7 +8,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -19,7 +21,7 @@ public class RegisterLogService {
         registerLogRepository.save(RegisterLog
                 .builder()
                 .registerId(registerId)
-                .workerId(SecurityContextHolder.getContext().getAuthentication().getName())
+                .workerId(Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication()).map(Principal::getName).orElse("admin"))
                 .registerType(type).registerAction(action).build());
     }
 
@@ -31,8 +33,7 @@ public class RegisterLogService {
         registerLog(registerId, action, RegisterType.WORKER);
     }
 
-    public List<RegisterLog> getAllByRegisterType(RegisterType registerType)
-    {
+    public List<RegisterLog> getAllByRegisterType(RegisterType registerType) {
         return registerLogRepository.findAll();
     }
 }

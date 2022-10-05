@@ -30,6 +30,4 @@ public class ItemLog {
     private Item item;
     @ManyToOne
     private Shop shop;
-    @Column
-    private String category;
 }

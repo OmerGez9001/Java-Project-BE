@@ -60,7 +60,6 @@ public class TransactionService {
                             .quantity(itemTransactionRequest.getQuantity())
                             .shop(Shop.builder().id(transactionDetails.getShopId()).build())
                             .totalPrice(itemPrice)
-                            .category(UUID.randomUUID().toString())
                             .build());
         }
         return new TransactionResult(transactionId, price);

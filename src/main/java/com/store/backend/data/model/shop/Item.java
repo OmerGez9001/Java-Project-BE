@@ -22,9 +22,12 @@ public class Item {
     @Column
     private String name;
 
-    @Column
+    @Column(columnDefinition="text", length=10485760)
     private String description;
 
     @Column
     private Double price;
+
+    @Column
+    private String category;
 }

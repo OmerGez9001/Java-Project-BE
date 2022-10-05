@@ -30,7 +30,7 @@ public class WorkerService implements UserDetailsService {
     private final RegisterLogService registerLogService;
 
 
-    public Worker createWorker(Worker worker) {
+    public Worker upsertWorker(Worker worker) {
         worker.setPassword(passwordEncoder.encode(worker.getPassword()));
         worker.setShop(shopRepository.findById(worker.getShop().getId()).get());
         Worker persistentWorker = this.workerRepository.save(worker);
