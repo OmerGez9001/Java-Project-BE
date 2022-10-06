@@ -1,41 +1,19 @@
 package com.store.backend.data.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.store.backend.data.model.worker.Job;
-import com.store.backend.data.model.worker.Worker;
+import lombok.Data;
+
 
 @JsonPropertyOrder({"workerId", "id", "fullName", "password", "phoneNumber", "accountNumber", "shop", "job"})
-public record WorkerDto(@JsonIgnore Worker worker) {
-    public String getWorkerId() {
-        return worker.getWorkerId();
-    }
-
-    public String getPassword() {
-        return worker.getPassword();
-    }
-
-    public String getId() {
-        return worker.getId();
-    }
-
-    public String getFullName() {
-        return worker.getFullName();
-    }
-
-    public String getPhoneNumber() {
-        return worker.getPhoneNumber();
-    }
-
-    public String getAccountNumber() {
-        return worker.getAccountNumber();
-    }
-
-    public Job getJob() {
-        return worker.getJob();
-    }
-
-    public ShopDto getShop() {
-        return new ShopDto(worker.getShop());
-    }
+@Data
+public class WorkerDto {
+    private String workerId;
+    private String password;
+    private String id;
+    private String fullName;
+    private String phoneNumber;
+    private String accountNumber;
+    private Job job;
+    private ShopDto shop;
 }

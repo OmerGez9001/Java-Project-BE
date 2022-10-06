@@ -1,17 +1,15 @@
 package com.store.backend.data.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.store.backend.data.model.shop.Shop;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @JsonPropertyOrder({"id", "shopName"})
-
-public record ShopDto(@JsonIgnore Shop shop) {
-    public long getId() {
-        return shop.getId();
-    }
-
-    public String getShopName() {
-        return shop.getShopName();
-    }
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class ShopDto {
+    private long id;
+    private String shopName;
 }

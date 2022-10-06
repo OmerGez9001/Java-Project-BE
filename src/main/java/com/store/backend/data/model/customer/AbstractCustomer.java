@@ -28,7 +28,7 @@ import static com.fasterxml.jackson.annotation.JsonSubTypes.*;
 public abstract class AbstractCustomer {
     @JsonInclude
     @Transient
-    public final String type = this.getClass().getSimpleName();
+    private String type = this.getClass().getSimpleName();
 
     @Id
     private String id;

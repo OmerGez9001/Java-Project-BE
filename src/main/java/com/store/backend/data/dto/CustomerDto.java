@@ -1,24 +1,14 @@
 package com.store.backend.data.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.store.backend.data.model.customer.AbstractCustomer;
+import lombok.Data;
 
-@JsonPropertyOrder({"id", "fullName", "phoneNumber", "customerType"})
-public record CustomerDto(@JsonIgnore AbstractCustomer abstractCustomer) {
-    public String getId() {
-        return abstractCustomer.getId();
-    }
 
-    public String getFullName() {
-        return abstractCustomer.getFullName();
-    }
-
-    public String getPhoneNumber() {
-        return abstractCustomer.getPhoneNumber();
-    }
-
-    public String getCustomerType() {
-        return abstractCustomer.getType();
-    }
+@JsonPropertyOrder({"id", "type", "fullName", "phoneNumber"})
+@Data
+public class CustomerDto {
+    private String type;
+    private String id;
+    private String fullName;
+    private String phoneNumber;
 }

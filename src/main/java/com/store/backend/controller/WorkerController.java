@@ -2,6 +2,8 @@ package com.store.backend.controller;
 
 import com.store.backend.assembler.WorkerDtoAssembler;
 import com.store.backend.data.dto.WorkerDto;
+import com.store.backend.data.mapper.WorkerMapper;
+import com.store.backend.data.mapper.WorkerMapperImpl;
 import com.store.backend.data.model.worker.Worker;
 import com.store.backend.service.WorkerService;
 import lombok.RequiredArgsConstructor;
@@ -20,15 +22,20 @@ public class WorkerController {
 
     private final WorkerDtoAssembler workerDtoAssembler;
 
+    private final WorkerMapper mapper;
+
 
     @GetMapping("/{id}")
     public ResponseEntity<EntityModel<WorkerDto>> getWorker(@PathVariable String id) {
-        return ResponseEntity.of(workerService.getWorker(id).map(WorkerDto::new).map(workerDtoAssembler::toModel));
+        return ResponseEntity
+                .of(workerService.getWorker(id)
+                .map(mapper::workerToWorkerDto)
+                .map(workerDtoAssembler::toModel));
     }
 
     @PostMapping
-    public ResponseEntity<EntityModel<WorkerDto>> upsertWorker(@RequestBody Worker worker) {
-        return ResponseEntity.ok(workerDtoAssembler.toModel(new WorkerDto(workerService.upsertWorker(worker))));
+    public ResponseEntity<EntityModel<WorkerDto>> upsertWorker(@RequestBody WorkerDto worker) {
+        return ResponseEntity.ok(workerDtoAssembler.toModel(mapper.workerToWorkerDto(workerService.upsertWorker(mapper.workerDtoToWorker(worker)))));
     }
 
     @DeleteMapping("/{id}")
@@ -40,6 +47,6 @@ public class WorkerController {
 
     @GetMapping
     public CollectionModel<EntityModel<WorkerDto>> getAllWorkers() {
-        return workerDtoAssembler.toCollectionModel(workerService.workers().stream().map(WorkerDto::new).collect(Collectors.toList()));
+        return workerDtoAssembler.toCollectionModel(workerService.workers().stream().map(mapper::workerToWorkerDto).collect(Collectors.toList()));
     }
 }
