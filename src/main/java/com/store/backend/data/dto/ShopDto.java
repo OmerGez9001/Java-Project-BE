@@ -1,15 +1,12 @@
 package com.store.backend.data.dto;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @JsonPropertyOrder({"id", "shopName"})
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Builder
+@Value
 public class ShopDto {
-    private long id;
-    private String shopName;
+    long id;
+    String shopName;
 }
