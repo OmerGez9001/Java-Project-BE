@@ -4,7 +4,6 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.store.backend.data.dto.WorkerDetails;
 import com.store.backend.exception.NewTokenWasProvided;
 import com.store.backend.exception.TokenNotFound;
 import com.store.backend.repository.redis.LoginMetadataRepository;

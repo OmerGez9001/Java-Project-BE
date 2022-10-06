@@ -12,6 +12,7 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
@@ -35,7 +36,8 @@ public class WorkerController {
 
     @PostMapping
     public ResponseEntity<EntityModel<WorkerDto>> upsertWorker(@RequestBody WorkerDto worker) {
-        return ResponseEntity.ok(workerDtoAssembler.toModel(mapper.workerToWorkerDto(workerService.upsertWorker(mapper.workerDtoToWorker(worker)))));
+        WorkerDto savedWorker = mapper.workerToWorkerDto(workerService.upsertWorker(mapper.workerDtoToWorker(worker)));
+        return ResponseEntity.ok(workerDtoAssembler.toModel(savedWorker));
     }
 
     @DeleteMapping("/{id}")
@@ -47,6 +49,7 @@ public class WorkerController {
 
     @GetMapping
     public CollectionModel<EntityModel<WorkerDto>> getAllWorkers() {
-        return workerDtoAssembler.toCollectionModel(workerService.workers().stream().map(mapper::workerToWorkerDto).collect(Collectors.toList()));
+        List<WorkerDto> collect = workerService.workers().stream().map(mapper::workerToWorkerDto).toList();
+        return workerDtoAssembler.toCollectionModel(collect);
     }
 }

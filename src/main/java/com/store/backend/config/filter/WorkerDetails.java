@@ -1,4 +1,4 @@
-package com.store.backend.data.dto;
+package com.store.backend.config.filter;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
