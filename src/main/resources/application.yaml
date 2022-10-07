@@ -20,3 +20,5 @@ spring:
   sql:
     init:
       platform: postgres
+springdoc:
+  show-login-endpoint: true

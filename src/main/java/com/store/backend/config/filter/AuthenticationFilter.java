@@ -5,6 +5,8 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.store.backend.data.model.login.LoginMetadata;
 import com.store.backend.repository.redis.LoginMetadataRepository;
+import lombok.SneakyThrows;
+import org.apache.commons.io.IOUtils;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -35,11 +37,12 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
         setFilterProcessesUrl("/api/login");
     }
 
+    @SneakyThrows
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
-        String username = request.getParameter("username");
-        String password = request.getParameter("password");
-        return authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+        String content = IOUtils.toString(request.getReader());
+        AuthenticationRequest authenticationRequest = new ObjectMapper().readValue(content,AuthenticationRequest.class);
+        return authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(),authenticationRequest.getPassword()));
     }
 
     @Override
@@ -74,7 +77,5 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
         repository.save(new LoginMetadata(user.getUsername(),jwtId));
         new ObjectMapper().writeValue(response.getOutputStream(), body);
-
-
     }
 }

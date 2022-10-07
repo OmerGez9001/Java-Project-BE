@@ -57,7 +57,7 @@ public class DataLoader implements CommandLineRunner {
 
         Worker worker = Worker.builder()
                 .workerId("555")
-                .password(passwordEncoder.encode("bleicher"))
+                .password("bleicher")
                 .id("208632752")
                 .fullName("Itay Bleicher")
                 .phoneNumber("0527222646")
@@ -66,7 +66,7 @@ public class DataLoader implements CommandLineRunner {
                 .shop(firstShop).build();
         Worker worker2 = Worker.builder()
                 .workerId("5556")
-                .password(passwordEncoder.encode("bleicher2"))
+                .password("bleicher2")
                 .id("208632752")
                 .fullName("Itay Bleicher")
                 .phoneNumber("0527222646")
@@ -76,7 +76,7 @@ public class DataLoader implements CommandLineRunner {
 
         Worker worker3 = Worker.builder()
                 .workerId("123")
-                .password(passwordEncoder.encode("123"))
+                .password("123")
                 .id("208632754")
                 .fullName("Shon Bleicher")
                 .phoneNumber("123123123132")
@@ -86,7 +86,7 @@ public class DataLoader implements CommandLineRunner {
 
         Worker worker4 = Worker.builder()
                 .workerId("Avi")
-                .password(passwordEncoder.encode("Avi"))
+                .password("Avi")
                 .id("31624587")
                 .fullName("Avi Levi")
                 .phoneNumber("05472837462")
@@ -96,7 +96,7 @@ public class DataLoader implements CommandLineRunner {
 
         Worker worker5 = Worker.builder()
                 .workerId("Dan")
-                .password(passwordEncoder.encode("Dan"))
+                .password("Dan")
                 .id("31624587")
                 .fullName("Dan Cohen")
                 .phoneNumber("0547976473")
@@ -106,7 +106,7 @@ public class DataLoader implements CommandLineRunner {
 
         Worker worker6 = Worker.builder()
                 .workerId("Ron")
-                .password(passwordEncoder.encode("Ron"))
+                .password("Ron")
                 .id("31624587")
                 .fullName("Ron Yizhak")
                 .phoneNumber("0547975555")
