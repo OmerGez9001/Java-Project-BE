@@ -14,7 +14,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: create-drop
     properties:
         dialect: org.hibernate.dialect.PostgreSQLDialect
   sql:
@@ -22,3 +22,6 @@ spring:
       platform: postgres
 springdoc:
   show-login-endpoint: true
+
+login:
+  secret: bleich

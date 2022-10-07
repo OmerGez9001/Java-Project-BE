@@ -1,6 +1,6 @@
 package com.store.backend.service;
 
-import com.store.backend.exception.ShopAlreadyExists;
+import com.store.backend.exception.ShopNotExists;
 import com.store.backend.data.model.shop.Shop;
 import com.store.backend.repository.sql.ShopRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,9 +14,7 @@ import java.util.Optional;
 public class ShopService {
     private final ShopRepository shopRepository;
 
-    public Shop createShop(Shop shop) throws ShopAlreadyExists {
-        if (shopRepository.existsById(shop.getId()))
-            throw new ShopAlreadyExists("Shop already exists: " + shop.getId());
+    public Shop createShop(Shop shop) throws ShopNotExists {
         return shopRepository.save(shop);
     }
     public Optional<Shop> getShop(Long shopId){
@@ -24,6 +22,8 @@ public class ShopService {
     }
 
     public Shop updateShop(Shop shop) {
+        if (!shopRepository.existsById(shop.getId()))
+            throw new ShopNotExists("Shop is not exists: " + shop.getId());
         return this.shopRepository.save(shop);
     }
 

@@ -7,6 +7,6 @@ import lombok.*;
 @Builder
 @Value
 public class ShopDto {
-    long id;
+    Long id;
     String shopName;
 }
