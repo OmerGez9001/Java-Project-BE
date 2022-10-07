@@ -15,10 +15,12 @@ public class ServicesConfiguration {
     @Value("${login.secret}")
     private String secret;
 
+    @Value("${login.token-expiration-in-min}")
+    private Long tokenExpirationInMin;
+
     @Bean
-    public LoginService loginService(LoginMetadataRepository repository, ObjectMapper objectMapper, Utils utils)
-    {
-        return new LoginService(repository,objectMapper,utils,secret);
+    public LoginService loginService(LoginMetadataRepository repository, ObjectMapper objectMapper, Utils utils) {
+        return new LoginService(repository, objectMapper, utils, secret, tokenExpirationInMin);
     }
 
 }

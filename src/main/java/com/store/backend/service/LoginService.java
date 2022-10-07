@@ -39,6 +39,8 @@ public class LoginService {
 
     private final String secret;
 
+    private final Long tokenExpiresInMin;
+
     public void handleSuccessfulLogin(HttpServletRequest request, HttpServletResponse response, Authentication authResult) throws IOException {
         UserWithClaims user = (UserWithClaims) authResult.getPrincipal();
         JwtTokenWithId token = buildJwt(request.getRequestURL().toString(), (UserWithClaims) authResult.getPrincipal());
@@ -67,7 +69,7 @@ public class LoginService {
         String accessToken = JWT.create()
                 .withSubject(user.getUsername())
                 .withJWTId(jwtId)
-                .withExpiresAt(new Date(System.currentTimeMillis() + 10000 * 60 * 1000))
+                .withExpiresAt(new Date(System.currentTimeMillis() + tokenExpiresInMin * 60 * 1000))
                 .withIssuer(sourceUrl)
                 .withClaim("roles", user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
                 .withClaim("shop", user.getShopId())
