@@ -19,7 +19,6 @@ import java.util.UUID;
 public class TransactionLog extends BaseActionLog {
 
     @Id
-    @JsonIgnore
     private String _id;
 
     @Field(type = FieldType.Keyword)
