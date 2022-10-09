@@ -1,56 +1,79 @@
 package com.store.backend.service;
 
-import com.store.backend.data.dto.SellsPerItemReport;
-import com.store.backend.data.dto.SellsPerShopReport;
-import com.store.backend.data.dto.SellsPerCategoryReport;
-import com.store.backend.data.model.report.ItemLog;
-import com.store.backend.repository.sql.ItemLogRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.store.backend.data.dto.ItemsTransactionAggregation;
+import com.store.backend.data.model.report.TransactionLog;
+import com.store.backend.repository.elasticsearch.TransactionLogRepository;
+import com.store.backend.utils.Utils;
+import io.netty.util.concurrent.CompleteFuture;
 import lombok.RequiredArgsConstructor;
+import org.elasticsearch.search.aggregations.Aggregations;
+import org.elasticsearch.search.aggregations.bucket.terms.ParsedStringTerms;
+import org.elasticsearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
+import org.springframework.data.elasticsearch.core.SearchHits;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.stereotype.Service;
 
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
+
 
 @Service
 @RequiredArgsConstructor
 public class ItemLogService {
 
-    private final ItemLogRepository itemLogRepository;
+    private final TransactionLogRepository transactionLogRepository;
 
-    private final ShopService shopService;
+    private final Utils utils;
 
-    private final ItemService itemService;
+    private final ElasticsearchRestTemplate elasticsearchRestTemplate;
 
-    public void logItem(ItemLog itemLog) {
-        itemLogRepository.save(itemLog);
+    public void logItems(List<TransactionLog> transactionLogs) {
+        for (TransactionLog transactionLog : transactionLogs) {
+            transactionLog.setCreationTime(new Date());
+            transactionLog.setPerformedBy(utils.getCurrentUser());
+        }
+        transactionLogRepository.saveAll(transactionLogs);
     }
 
-    public List<SellsPerShopReport> getSellsPerShop() {
-        return itemLogRepository
-                .fetchSellsPerShop()
+    public List<ItemsTransactionAggregation> getTransactedItems() {
+
+        TermsAggregationBuilder itemsAggregation = new TermsAggregationBuilder("items").size(20).field("itemName.keyword");
+        TermsAggregationBuilder transactionAggregation = new TermsAggregationBuilder("transactionAction").size(2).field("transactionAction");
+
+        NativeSearchQuery searchQuery = new NativeSearchQueryBuilder()
+                .withAggregations(itemsAggregation.subAggregation(transactionAggregation))
+                .build();
+
+        SearchHits<TransactionLog> result = elasticsearchRestTemplate.search(searchQuery, TransactionLog.class);
+
+        return getAggregationFromResult(result, "items")
+                .getBuckets()
                 .stream()
-                .map(x -> SellsPerShopReport.builder().shop(shopService.getShop(Long.valueOf(x.getSubject())).get()).sells(x.getCount()).build())
-                .sorted(Comparator.comparing(SellsPerShopReport::getSells, Comparator.reverseOrder()).thenComparing(o -> o.getShop().getShopName()))
-                .toList();
+                .map(x -> parseAggregationCountAsObject("transactionAction", x.getAggregations(), x.getKeyAsString(), ItemsTransactionAggregation.class)).toList();
     }
 
-    public List<SellsPerCategoryReport> getSellsPerCategory() {
-        return itemLogRepository
-                .fetchSellsPerCategory()
-                .stream()
-                .map(x -> SellsPerCategoryReport.builder().category(x.getSubject()).count(x.getCount()).build())
-                .sorted(Comparator.comparing(SellsPerCategoryReport::getCount, Comparator.reverseOrder()).thenComparing(SellsPerCategoryReport::getCategory))
-
-                .toList();
+    public CompletableFuture<List<TransactionLog>> getWorkerTransactedItems(String workerId, Optional<Integer> page, Optional<Integer> size) {
+        return transactionLogRepository.findAllByPerformedByOrderByCreationTime(workerId, PageRequest.of(page.orElse(0), size.orElse(10)));
     }
 
-    public List<SellsPerItemReport> getSellsPerItem() {
-        return itemLogRepository
-                .fetchSellsPerItem()
-                .stream()
-                .map(x -> SellsPerItemReport.builder().item(itemService.getItem(Long.valueOf(x.getSubject()))).count(x.getCount()).build())
-                .sorted(Comparator.comparing(SellsPerItemReport::getCount, Comparator.reverseOrder()).thenComparing(x -> x.getItem().getName()))
-                .toList();
+    public CompletableFuture<List<TransactionLog>> getCustomerTransactedItems(String workerId, Optional<Integer> page, Optional<Integer> size) {
+        return transactionLogRepository.findAllByPerformedOnOrderByCreationTime(workerId, PageRequest.of(page.orElse(0), size.orElse(10)));
+
+    }
+
+    private ParsedStringTerms getAggregationFromResult(SearchHits<?> searchHits, String name) {
+        return ((Aggregations) searchHits.getAggregations().aggregations()).get(name);
+    }
+
+    private <T> T parseAggregationCountAsObject(String name, Aggregations aggregations, String keyName, Class<T> castedObject) {
+        Map<String, Object> bucketValues = new HashMap<>();
+        bucketValues.put("name", keyName);
+        ((ParsedStringTerms) aggregations.get(name)).getBuckets().forEach(x -> bucketValues.put(x.getKeyAsString().toLowerCase(), x.getDocCount()));
+        return new ObjectMapper().convertValue(bucketValues, castedObject);
     }
 
 }

@@ -25,4 +25,4 @@ springdoc:
 
 login:
   secret: bleich
-  token-expiration-in-min: 1
+  token-expiration-in-min: 15

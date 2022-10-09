@@ -15,12 +15,12 @@ import javax.persistence.Entity;
 
 public class RepeatCustomer extends AbstractCustomer {
     @Override
-    public double sell(double price) {
+    public double sellDiscount(double price) {
         return price * 0.6;
     }
 
     @Override
-    public double buy(double price) {
+    public double buyDiscount(double price) {
         return price*0.8;
     }
 }

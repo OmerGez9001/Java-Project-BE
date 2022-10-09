@@ -1,17 +1,18 @@
 package com.store.backend.controller;
 
+import com.store.backend.data.dto.ItemsTransactionAggregation;
 import com.store.backend.data.model.report.RegisterLog;
 import com.store.backend.data.model.report.RegisterType;
+import com.store.backend.data.model.report.TransactionLog;
 import com.store.backend.service.ItemLogService;
-import com.store.backend.data.dto.SellsPerCategoryReport;
-import com.store.backend.data.dto.SellsPerItemReport;
-import com.store.backend.data.dto.SellsPerShopReport;
 import com.store.backend.service.RegisterLogService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequestMapping("/api/report")
@@ -21,19 +22,25 @@ public class ReportController {
 
     private final RegisterLogService registerLogService;
 
-    @GetMapping("/shop")
-    public ResponseEntity<List<SellsPerShopReport>> getSellsPerShop() {
-        return ResponseEntity.ok(itemLogService.getSellsPerShop());
+    @GetMapping("/items")
+    public ResponseEntity<List<ItemsTransactionAggregation>> getTransactedItems() {
+        return ResponseEntity.ok(itemLogService.getTransactedItems());
     }
 
-    @GetMapping("/category")
-    public ResponseEntity<List<SellsPerCategoryReport>> getSellsPerCategory() {
-        return ResponseEntity.ok(itemLogService.getSellsPerCategory());
+    @GetMapping("/items/worker/{id}")
+    public ResponseEntity<CompletableFuture<List<TransactionLog>>> getTransactedItemsByWorkerId(
+            @PathVariable("id") String workerId,
+            @RequestParam(value = "page", required = false) Optional<Integer> page,
+            @RequestParam(value = "size", required = false) Optional<Integer> size) {
+        return ResponseEntity.ok(itemLogService.getWorkerTransactedItems(workerId, page, size));
     }
 
-    @GetMapping("/item")
-    public ResponseEntity<List<SellsPerItemReport>> getSellsPerItem() {
-        return ResponseEntity.ok(itemLogService.getSellsPerItem());
+    @GetMapping("/items/customer/{id}")
+    public ResponseEntity<CompletableFuture<List<TransactionLog>>> getTransactedItemsByCustomerId(
+            @PathVariable("id") String workerId,
+            @RequestParam(value = "page", required = false) Optional<Integer> page,
+            @RequestParam(value = "size", required = false) Optional<Integer> size) {
+        return ResponseEntity.ok(itemLogService.getCustomerTransactedItems(workerId, page, size));
     }
 
     @GetMapping("/customer")
