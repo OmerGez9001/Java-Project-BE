@@ -5,7 +5,9 @@ import com.store.backend.data.model.report.TransactionAction;
 import lombok.Builder;
 import lombok.Value;
 
-@JsonPropertyOrder({"transactionId", "itemName", "shopName", "priceAfterDiscount", "transactionAction"})
+import java.util.Date;
+
+@JsonPropertyOrder({"transactionId", "itemName", "shopName", "priceAfterDiscount", "transactionAction", "performedOn", "performedBy", "creationTime"})
 @Builder
 @Value
 public class TransactionLogDto {
@@ -21,4 +23,10 @@ public class TransactionLogDto {
     Double priceAfterDiscount;
 
     TransactionAction transactionAction;
+
+    String performedBy;
+
+    String performedOn;
+
+    Date creationTime;
 }

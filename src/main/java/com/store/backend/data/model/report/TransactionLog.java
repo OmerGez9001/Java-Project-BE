@@ -9,15 +9,15 @@ import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.*;
 
+import java.util.Date;
 import java.util.UUID;
 
 @Data
 @Document(indexName = "transactionlog")
-@SuperBuilder()
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 public class TransactionLog extends BaseActionLog {
-
     @Id
     private String _id;
 
