@@ -178,7 +178,7 @@ public class DataLoader implements CommandLineRunner {
     private void buy() throws ItemNotExistsInShop, ItemNotEnoughQuantity {
         for (long j = 1; j <= 100; j++) {
             TransactionDetails transactionDetails = new TransactionDetails();
-            transactionDetails.setItems(Arrays.asList(new ItemTransactionRequest(ThreadLocalRandom.current().nextInt(1, Math.toIntExact(itemService.items().size())), ThreadLocalRandom.current().nextInt(0, 10)), new ItemTransactionRequest(2L, 3)));
+            transactionDetails.setItems(Arrays.asList(new ItemTransactionRequest(ThreadLocalRandom.current().nextInt(1, Math.toIntExact(itemService.items().size())), ThreadLocalRandom.current().nextInt(1, 10)), new ItemTransactionRequest(2L, 3)));
             transactionDetails.setShopId(ThreadLocalRandom.current().nextLong(1, shopService.shops().size()));
             transactionDetails.setCustomerId("Bleicher");
             transactionService.buy(transactionDetails);
