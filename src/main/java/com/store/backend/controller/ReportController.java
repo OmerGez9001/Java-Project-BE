@@ -26,8 +26,8 @@ public class ReportController {
     private final ReportDtoAssembler reportDtoAssembler;
 
     @GetMapping("/items")
-    public ResponseEntity<List<ItemsTransactionAggregation>> getTransactedItems() {
-        return ResponseEntity.ok(itemLogService.getTransactedItems());
+    public ResponseEntity<List<ItemsTransactionAggregation>> getTransactedItems(@RequestParam(value="quantity",required = false)Optional<Long> quantity) {
+        return ResponseEntity.ok(itemLogService.getTransactedItems(quantity));
     }
 
     @GetMapping("/items/worker/{id}")

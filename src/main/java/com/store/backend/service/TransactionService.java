@@ -10,7 +10,6 @@ import com.store.backend.exception.ItemNotExistsInShop;
 import com.store.backend.data.model.customer.AbstractCustomer;
 import com.store.backend.data.model.shop.ItemQuantity;
 import com.store.backend.data.model.shop.ItemQuantityKey;
-import com.store.backend.utils.Utils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

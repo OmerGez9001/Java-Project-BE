@@ -5,9 +5,11 @@ import com.store.backend.data.dto.ItemsTransactionAggregation;
 import com.store.backend.data.model.report.TransactionLog;
 import com.store.backend.repository.elasticsearch.TransactionLogRepository;
 import com.store.backend.utils.Utils;
-import io.netty.util.concurrent.CompleteFuture;
 import lombok.RequiredArgsConstructor;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.aggregations.Aggregations;
+import org.elasticsearch.search.aggregations.bucket.filter.FilterAggregationBuilder;
+import org.elasticsearch.search.aggregations.bucket.filter.ParsedFilter;
 import org.elasticsearch.search.aggregations.bucket.terms.ParsedStringTerms;
 import org.elasticsearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 import org.springframework.data.domain.PageRequest;
@@ -39,13 +41,15 @@ public class ItemLogService {
         transactionLogRepository.saveAll(transactionLogs);
     }
 
-    public List<ItemsTransactionAggregation> getTransactedItems() {
+    public List<ItemsTransactionAggregation> getTransactedItems(Optional<Long> quantity) {
+
 
         TermsAggregationBuilder itemsAggregation = new TermsAggregationBuilder("items").size(20).field("itemName.keyword");
         TermsAggregationBuilder transactionAggregation = new TermsAggregationBuilder("transactionAction").size(2).field("transactionAction");
+        FilterAggregationBuilder quantityAggregation = new FilterAggregationBuilder("quantity", QueryBuilders.rangeQuery("quantity").gte(quantity.orElse(3L)));
 
         NativeSearchQuery searchQuery = new NativeSearchQueryBuilder()
-                .withAggregations(itemsAggregation.subAggregation(transactionAggregation))
+                .withAggregations(itemsAggregation.subAggregation(transactionAggregation.subAggregation(quantityAggregation)))
                 .build();
 
         SearchHits<TransactionLog> result = elasticsearchRestTemplate.search(searchQuery, TransactionLog.class);
@@ -72,7 +76,7 @@ public class ItemLogService {
     private <T> T parseAggregationCountAsObject(String name, Aggregations aggregations, String keyName, Class<T> castedObject) {
         Map<String, Object> bucketValues = new HashMap<>();
         bucketValues.put("name", keyName);
-        ((ParsedStringTerms) aggregations.get(name)).getBuckets().forEach(x -> bucketValues.put(x.getKeyAsString().toLowerCase(), x.getDocCount()));
+        ((ParsedStringTerms) aggregations.get(name)).getBuckets().forEach(x -> bucketValues.put(x.getKeyAsString().toLowerCase(),((ParsedFilter) x.getAggregations().get("quantity")).getDocCount()));
         return new ObjectMapper().convertValue(bucketValues, castedObject);
     }
 
