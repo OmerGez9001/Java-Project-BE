@@ -3,7 +3,6 @@ package com.store.backend.controller;
 import com.store.backend.assembler.CustomerDtoAssembler;
 import com.store.backend.data.dto.CustomerDto;
 import com.store.backend.data.mapper.CustomerMapper;
-import com.store.backend.data.model.customer.AbstractCustomer;
 import com.store.backend.service.CustomerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.hateoas.CollectionModel;
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 
 @RestController
@@ -34,7 +32,12 @@ public class CustomerController {
 
     @PostMapping
     public ResponseEntity<EntityModel<CustomerDto>> createCustomer(@RequestBody CustomerDto customerDto) {
-        CustomerDto createdCustomer = customerMapper.customerToCustomerDto(customerService.upsertCustomer(customerMapper.customerDtoToCustomer(customerDto)));
+        CustomerDto createdCustomer = customerMapper.customerToCustomerDto(customerService.createCustomer(customerMapper.customerDtoToCustomer(customerDto)));
+        return ResponseEntity.ok(customerDtoAssembler.toModel(createdCustomer));
+    }
+    @PutMapping
+    public ResponseEntity<EntityModel<CustomerDto>> updateCustomer(@RequestBody CustomerDto customerDto) {
+        CustomerDto createdCustomer = customerMapper.customerToCustomerDto(customerService.updateCustomer(customerMapper.customerDtoToCustomer(customerDto)));
         return ResponseEntity.ok(customerDtoAssembler.toModel(createdCustomer));
     }
 
@@ -48,6 +51,16 @@ public class CustomerController {
     public ResponseEntity<CollectionModel<EntityModel<CustomerDto>>> getAllCustomers() {
         List<CustomerDto> fetchedCustomers = customerService
                 .customers()
+                .stream()
+                .map(customerMapper::customerToCustomerDto)
+                .toList();
+        return ResponseEntity.ok(customerDtoAssembler.toCollectionModel(fetchedCustomers));
+    }
+
+    @GetMapping("fullname/{name}")
+    public ResponseEntity<CollectionModel<EntityModel<CustomerDto>>> getAllCustomersLike(@PathVariable String name) {
+        List<CustomerDto> fetchedCustomers = customerService
+                .customersByFullNameLike(name)
                 .stream()
                 .map(customerMapper::customerToCustomerDto)
                 .toList();

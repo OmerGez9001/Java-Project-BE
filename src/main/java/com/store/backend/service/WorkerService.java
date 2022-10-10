@@ -30,13 +30,20 @@ public class WorkerService implements UserDetailsService {
     private final RegisterLogService registerLogService;
 
 
-    public Worker upsertWorker(Worker worker) {
+    public Worker createWorker(Worker worker) {
+        if (workerRepository.existsById(worker.getWorkerId()))
+            throw new WorkerException("Worker already exists :" + worker.getWorkerId());
         worker.setPassword(passwordEncoder.encode(worker.getPassword()));
         worker.setShop(shopRepository.findById(worker.getShop().getId()).get());
-        Worker persistentWorker = this.workerRepository.save(worker);
-        RegisterAction registerAction = this.workerRepository.existsById(worker.getWorkerId()) ? RegisterAction.MODIFY : RegisterAction.CREATE;
-        this.registerLogService.registerWorkerLog(persistentWorker.getWorkerId(), registerAction);
-        return persistentWorker;
+        return this.workerRepository.save(worker);
+    }
+
+    public Worker updateWorker(Worker worker) {
+        if (!workerRepository.existsById(worker.getWorkerId()))
+            throw new WorkerException("Worker is not exists :" + worker.getWorkerId());
+        worker.setPassword(passwordEncoder.encode(worker.getPassword()));
+        worker.setShop(shopRepository.findById(worker.getShop().getId()).get());
+        return this.workerRepository.save(worker);
     }
 
     public Optional<Worker> getWorker(String workerId) {

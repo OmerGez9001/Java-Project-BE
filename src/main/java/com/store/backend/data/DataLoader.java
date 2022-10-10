@@ -35,10 +35,9 @@ public class DataLoader implements CommandLineRunner {
     private final ItemService itemService;
     private final ItemQuantityRepository itemQuantityRepository;
     private final TransactionService transactionService;
-    private final CustomerRepository customerRepository;
-    private final BCryptPasswordEncoder passwordEncoder;
-    private final ItemLogService itemLogService;
+    private final CustomerService customerService;
     private final ExternalProductsApi externalProductsApi;
+
     @Override
     public void run(String... args) throws ItemNotExistsInShop, ItemNotEnoughQuantity {
         List<ExternalProduct> externalProducts = externalProductsApi.fetchProducts();
@@ -114,10 +113,11 @@ public class DataLoader implements CommandLineRunner {
                 .job(Job.SHIFT_SUPERVISOR)
                 .shop(secondShop).build();
 
-        Arrays.asList(worker, worker2, worker3, worker4, worker5, worker6).forEach(workerService::upsertWorker);
+        Arrays.asList(worker, worker2, worker3, worker4, worker5, worker6).forEach(workerService::createWorker);
     }
 
     private void createShops() {
+        long counter = 0L;
         List<String> shopNames = new ArrayList<>();
         shopNames.add("Best Shop");
         shopNames.add("Definitely the Best Shop");
@@ -126,7 +126,7 @@ public class DataLoader implements CommandLineRunner {
         shopNames.add("No Money Shop");
 
         for (String shopName : shopNames) {
-            Shop shop = Shop.builder().shopName(shopName).build();
+            Shop shop = Shop.builder().id(++counter).shopName(shopName).build();
             shopService.createShop(shop);
         }
     }
@@ -171,9 +171,8 @@ public class DataLoader implements CommandLineRunner {
         newCustomer.setId("Bleicher2");
         newCustomer.setPhoneNumber("123123123");
 
-        this.customerRepository.save(vipCustomer);
-        this.customerRepository.save(newCustomer);
-
+        this.customerService.createCustomer(vipCustomer);
+        this.customerService.createCustomer(newCustomer);
     }
 
     private void buy() throws ItemNotExistsInShop, ItemNotEnoughQuantity {
@@ -184,8 +183,6 @@ public class DataLoader implements CommandLineRunner {
             transactionDetails.setCustomerId("Bleicher");
             transactionService.buy(transactionDetails);
         }
-
-
     }
 
     private void sell() throws ItemNotExistsInShop, ItemNotEnoughQuantity {
@@ -195,5 +192,4 @@ public class DataLoader implements CommandLineRunner {
         transactionDetails.setCustomerId("Bleicher");
         TransactionResult v = transactionService.sell(transactionDetails);
     }
-
 }

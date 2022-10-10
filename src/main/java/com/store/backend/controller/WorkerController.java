@@ -35,8 +35,14 @@ public class WorkerController {
     }
 
     @PostMapping
-    public ResponseEntity<EntityModel<WorkerDto>> upsertWorker(@RequestBody WorkerDto worker) {
-        WorkerDto savedWorker = mapper.workerToWorkerDto(workerService.upsertWorker(mapper.workerDtoToWorker(worker)));
+    public ResponseEntity<EntityModel<WorkerDto>> createWorker(@RequestBody WorkerDto worker) {
+        WorkerDto savedWorker = mapper.workerToWorkerDto(workerService.createWorker(mapper.workerDtoToWorker(worker)));
+        return ResponseEntity.ok(workerDtoAssembler.toModel(savedWorker));
+    }
+
+    @PutMapping
+    public ResponseEntity<EntityModel<WorkerDto>> updateWorker(@RequestBody WorkerDto worker) {
+        WorkerDto savedWorker = mapper.workerToWorkerDto(workerService.updateWorker(mapper.workerDtoToWorker(worker)));
         return ResponseEntity.ok(workerDtoAssembler.toModel(savedWorker));
     }
 

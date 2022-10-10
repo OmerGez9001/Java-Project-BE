@@ -19,6 +19,7 @@ public class CustomerDtoAssembler implements SimpleRepresentationModelAssembler<
         resource.add(linkTo(methodOn(CustomerController.class)
                 .getCustomer(resource.getContent().getId())).withSelfRel());
         resource.add(linkTo(methodOn(CustomerController.class).getAllCustomers()).withRel("customers"));
+        resource.add(linkTo(methodOn(CustomerController.class).getAllCustomersLike(resource.getContent().getFullName())).withRel("customerByName"));
     }
 
     @Override

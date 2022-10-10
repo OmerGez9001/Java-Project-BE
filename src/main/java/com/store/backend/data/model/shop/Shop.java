@@ -14,8 +14,6 @@ import javax.persistence.*;
 @Builder
 public class Shop {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column
     private Long id;
 
     @Column

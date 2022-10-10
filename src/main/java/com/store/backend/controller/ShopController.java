@@ -5,7 +5,7 @@ import com.store.backend.assembler.ShopDtoAssembler;
 import com.store.backend.data.dto.ShopDto;
 import com.store.backend.data.mapper.ShopMapper;
 import com.store.backend.data.model.shop.ItemQuantity;
-import com.store.backend.exception.ShopNotExists;
+import com.store.backend.exception.ShopException;
 import com.store.backend.service.ItemService;
 import com.store.backend.service.ShopService;
 import lombok.RequiredArgsConstructor;
@@ -44,7 +44,7 @@ public class ShopController {
     }
 
     @PostMapping
-    public ResponseEntity<EntityModel<ShopDto>> createShop(ShopDto shopDto) throws ShopNotExists {
+    public ResponseEntity<EntityModel<ShopDto>> createShop(ShopDto shopDto) throws ShopException {
         ShopDto createdShop = shopMapper.shopToShopDto(shopService.createShop(shopMapper.shopDtoToShop(shopDto)));
         return ResponseEntity.ok(shopDtoAssembler.toModel(createdShop));
     }
