@@ -1,7 +1,6 @@
 package com.store.backend.assembler;
 
 import com.store.backend.controller.CustomerController;
-import com.store.backend.controller.WorkerController;
 import com.store.backend.data.dto.CustomerDto;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;

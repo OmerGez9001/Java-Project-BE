@@ -1,7 +1,6 @@
 package com.store.backend.data.model.report;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -25,7 +24,6 @@ public abstract class BaseActionLog {
 
     @Field(type = FieldType.Date, format = DateFormat.basic_date_time)
     private Date creationTime;
-
 
 }
 

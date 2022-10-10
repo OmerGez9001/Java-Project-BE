@@ -3,8 +3,6 @@ package com.store.backend.controller;
 import com.store.backend.assembler.WorkerDtoAssembler;
 import com.store.backend.data.dto.WorkerDto;
 import com.store.backend.data.mapper.WorkerMapper;
-import com.store.backend.data.mapper.WorkerMapperImpl;
-import com.store.backend.data.model.worker.Worker;
 import com.store.backend.service.WorkerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.hateoas.CollectionModel;
@@ -13,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("api/worker")

@@ -19,8 +19,7 @@ public class Utils {
         String authorizationHeader = Optional.ofNullable(request.getHeader(AUTHORIZATION)).orElse(request.getParameter(AUTHORIZATION));
         if (authorizationHeader == null)
             throw new AuthorizationHeaderNotFound("requested path: " + request.getServletPath());
-        String token = authorizationHeader.substring("Bearer ".length());
-        return token;
+        return authorizationHeader.substring("Bearer ".length());
     }
 
     public String getCurrentUser() {

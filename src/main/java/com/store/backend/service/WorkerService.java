@@ -1,9 +1,9 @@
 package com.store.backend.service;
 
 import com.store.backend.config.filter.UserWithClaims;
-import com.store.backend.data.model.report.RegisterAction;
 import com.store.backend.data.model.worker.Job;
 import com.store.backend.data.model.worker.Worker;
+import com.store.backend.exception.WorkerException;
 import com.store.backend.repository.sql.ShopRepository;
 import com.store.backend.repository.sql.WorkerRepository;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +27,6 @@ public class WorkerService implements UserDetailsService {
     private final ShopRepository shopRepository;
     private final BCryptPasswordEncoder passwordEncoder;
 
-    private final RegisterLogService registerLogService;
 
 
     public Worker createWorker(Worker worker) {
@@ -56,7 +55,6 @@ public class WorkerService implements UserDetailsService {
 
     public void deleteWorker(String workerId) {
         this.workerRepository.deleteById(workerId);
-        this.registerLogService.registerWorkerLog(workerId, RegisterAction.DELETE);
     }
 
     @Override

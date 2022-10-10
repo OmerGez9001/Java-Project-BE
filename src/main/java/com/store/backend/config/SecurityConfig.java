@@ -3,7 +3,6 @@ package com.store.backend.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.store.backend.config.filter.AuthenticationFilter;
 import com.store.backend.config.filter.AuthorizationFilter;
-import com.store.backend.repository.redis.LoginMetadataRepository;
 import com.store.backend.service.LoginService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

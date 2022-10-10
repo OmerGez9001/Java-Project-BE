@@ -1,6 +1,5 @@
 package com.store.backend.service;
 
-import com.store.backend.data.model.report.RegisterAction;
 import com.store.backend.data.model.customer.AbstractCustomer;
 import com.store.backend.exception.CustomerException;
 import com.store.backend.repository.sql.CustomerRepository;
@@ -14,7 +13,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CustomerService {
     private final CustomerRepository customerRepository;
-    private final RegisterLogService registerLogService;
 
     public AbstractCustomer createCustomer(AbstractCustomer customer) {
         if (!customerRepository.existsById(customer.getId()))
@@ -38,7 +36,6 @@ public class CustomerService {
 
     public void deleteCustomer(String customerId) {
         this.customerRepository.deleteById(customerId);
-        this.registerLogService.registerCustomerLog(customerId, RegisterAction.DELETE);
     }
 
     public List<AbstractCustomer> customers() {
